@@ -61,7 +61,7 @@ public interface MaterialisedMiningTool extends FabricItem {
                 minableBlock = BlockTags.HOE_MINEABLE;
             else
                 return FabricItem.super.isSuitableFor(stack, state);
-            return (i >= 1 || !state.isIn(BlockTags.NEEDS_STONE_TOOL)) && state.isIn(minableBlock);
+            return i < 1 && state.isIn(BlockTags.NEEDS_STONE_TOOL) ? false : state.isIn(minableBlock);
         }
     }
 
