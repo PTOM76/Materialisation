@@ -21,6 +21,7 @@ import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public interface MaterialisedMiningTool extends FabricItem {
 
@@ -42,6 +43,22 @@ public interface MaterialisedMiningTool extends FabricItem {
         return 0f;
     }
 
+    @Nullable
+    default TagKey<Block> getEffectiveBlocks() {
+        TagKey<Block> minableBlock;
+        if (this instanceof AxeItem)
+            minableBlock = BlockTags.AXE_MINEABLE;
+        else if (this instanceof PickaxeItem)
+            minableBlock = BlockTags.PICKAXE_MINEABLE;
+        else if (this instanceof ShovelItem)
+            minableBlock = BlockTags.SHOVEL_MINEABLE;
+        else if (this instanceof HoeItem)
+            minableBlock = BlockTags.HOE_MINEABLE;
+        else
+            return null;
+        return minableBlock;
+    }
+
     @Override
     default boolean isSuitableFor(ItemStack stack, BlockState state) {
         int i = getMiningLevel(stack);
@@ -50,16 +67,8 @@ public interface MaterialisedMiningTool extends FabricItem {
         } else if (i < 2 && state.isIn(BlockTags.NEEDS_IRON_TOOL)) {
             return false;
         } else {
-            TagKey<Block> minableBlock;
-            if (this instanceof AxeItem)
-                minableBlock = BlockTags.AXE_MINEABLE;
-            else if (this instanceof PickaxeItem)
-                minableBlock = BlockTags.PICKAXE_MINEABLE;
-            else if (this instanceof ShovelItem)
-                minableBlock = BlockTags.SHOVEL_MINEABLE;
-            else if (this instanceof HoeItem)
-                minableBlock = BlockTags.HOE_MINEABLE;
-            else
+            TagKey<Block> minableBlock = getEffectiveBlocks();
+            if (minableBlock == null)
                 return FabricItem.super.isSuitableFor(stack, state);
             return i < 1 && state.isIn(BlockTags.NEEDS_STONE_TOOL) ? false : state.isIn(minableBlock);
         }
@@ -72,7 +81,13 @@ public interface MaterialisedMiningTool extends FabricItem {
     }
     
     default float getMiningSpeedMultiplier(ItemStack stack, BlockState state) {
-        return MaterialisationUtils.getToolBreakingSpeed(stack);
+        TagKey<Block> minableBlock = getEffectiveBlocks();
+        if (minableBlock == null)
+            return MaterialisationUtils.getToolBreakingSpeed(stack);
+        if (state.isIn(minableBlock))
+            return MaterialisationUtils.getToolBreakingSpeed(stack);
+        else
+            return 1.0F;
     }
     
     default int getMiningLevel(ItemStack stack) {
