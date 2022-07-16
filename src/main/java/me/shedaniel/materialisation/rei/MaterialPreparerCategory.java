@@ -13,7 +13,6 @@ import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
@@ -39,7 +38,7 @@ public class MaterialPreparerCategory implements DisplayCategory<MaterialPrepare
 
     @Override
     public Text getTitle() {
-        return new TranslatableText("category.materialisation.material_preparer");
+        return Text.translatable("category.materialisation.material_preparer");
     }
 
     @Override

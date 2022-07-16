@@ -10,10 +10,8 @@ import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
@@ -49,38 +47,38 @@ public class MaterialisationDescriptionListWidget extends DynamicElementListWidg
     
     public void addPack(ConfigPackInfo packInfo, MaterialsPack materialsPack) {
         clearItems();
-        addItem(new TextEntry(new LiteralText(packInfo.getDisplayName()).formatted(Formatting.UNDERLINE, Formatting.BOLD)));
+        addItem(new TextEntry(Text.literal(packInfo.getDisplayName()).formatted(Formatting.UNDERLINE, Formatting.BOLD)));
         addItem(new EmptyEntry(5));
         if (packInfo.getAuthors().isEmpty())
-            addItem(new TextEntry(new TranslatableText("config.text.materialisation.author", I18n.translate("config.text.materialisation.no_one")).formatted(Formatting.GRAY)));
+            addItem(new TextEntry(Text.translatable("config.text.materialisation.author", I18n.translate("config.text.materialisation.no_one")).formatted(Formatting.GRAY)));
         else
-            addItem(new TextEntry(new TranslatableText("config.text.materialisation.author", String.join(", ", packInfo.getAuthors())).formatted(Formatting.GRAY)));
-        addItem(new TextEntry(new TranslatableText("config.text.materialisation.version", packInfo.getVersion().getFriendlyString()).formatted(Formatting.GRAY)));
-        addItem(new TextEntry(new TranslatableText("config.text.materialisation.identifier", packInfo.getIdentifier().toString()).formatted(Formatting.GRAY)));
+            addItem(new TextEntry(Text.translatable("config.text.materialisation.author", String.join(", ", packInfo.getAuthors())).formatted(Formatting.GRAY)));
+        addItem(new TextEntry(Text.translatable("config.text.materialisation.version", packInfo.getVersion().getFriendlyString()).formatted(Formatting.GRAY)));
+        addItem(new TextEntry(Text.translatable("config.text.materialisation.identifier", packInfo.getIdentifier().toString()).formatted(Formatting.GRAY)));
         if (!packInfo.getDescription().isEmpty()) {
-            for (OrderedText text : MinecraftClient.getInstance().textRenderer.wrapLines(new LiteralText(packInfo.getDescription()), getItemWidth())) {
+            for (OrderedText text : MinecraftClient.getInstance().textRenderer.wrapLines(Text.literal(packInfo.getDescription()), getItemWidth())) {
                 addItem(new TextEntry(MaterialisationCloth.color((Text)text, Formatting.GRAY)));
             }
         }
         addItem(new EmptyEntry(11));
-        for (OrderedText text : MinecraftClient.getInstance().textRenderer.wrapLines((new TranslatableText("config.text.materialisation.materials", materialsPack.getKnownMaterials().count(), materialsPack.getKnownMaterials().map(PartMaterial::getMaterialTranslateKey).map(I18n::translate).collect(Collectors.joining(", ")))), getItemWidth())) {
+        for (OrderedText text : MinecraftClient.getInstance().textRenderer.wrapLines((Text.translatable("config.text.materialisation.materials", materialsPack.getKnownMaterials().count(), materialsPack.getKnownMaterials().map(PartMaterial::getMaterialTranslateKey).map(I18n::translate).collect(Collectors.joining(", ")))), getItemWidth())) {
             addItem(new TextEntry(MaterialisationCloth.color((Text)text, Formatting.GRAY)));
         }
     }
     
     public void addMaterial(MaterialisationMaterialsScreen og, PartMaterial partMaterial) {
         clearItems();
-        addItem(new TitleMaterialOverrideEntry(og, partMaterial, new TranslatableText(partMaterial.getMaterialTranslateKey()).formatted(Formatting.UNDERLINE, Formatting.BOLD)));
+        addItem(new TitleMaterialOverrideEntry(og, partMaterial, Text.translatable(partMaterial.getMaterialTranslateKey()).formatted(Formatting.UNDERLINE, Formatting.BOLD)));
         DecimalFormat df = new DecimalFormat("#.##");
-        addItem(new ColorEntry(new TranslatableText("config.text.materialisation.color"), partMaterial.isBright() ? partMaterial.getToolColor() : darkerColor(darkerColor(partMaterial.getToolColor()))));
-        addItem(new TextEntry(new TranslatableText("config.text.materialisation.identifier", partMaterial.getIdentifier().toString()).formatted(Formatting.GRAY)));
-        addItem(new TextEntry(new TranslatableText("config.text.materialisation.enchantability", partMaterial.getEnchantability())));
-        addItem(new TextEntry(new TranslatableText("config.text.materialisation.durability", partMaterial.getToolDurability())));
-        addItem(new TextEntry(new TranslatableText("config.text.materialisation.mining_level", partMaterial.getMiningLevel())));
-        addItem(new TextEntry(new TranslatableText("config.text.materialisation.tool_speed", df.format(partMaterial.getToolSpeed()))));
-        addItem(new TextEntry(new TranslatableText("config.text.materialisation.attack_damage", df.format(partMaterial.getAttackDamage()))));
-        addItem(new TextEntry(new TranslatableText("config.text.materialisation.tool_speed_multiplier", df.format(partMaterial.getBreakingSpeedMultiplier()))));
-        addItem(new TextEntry(new TranslatableText("config.text.materialisation.durability_multiplier", df.format(partMaterial.getDurabilityMultiplier()))));
+        addItem(new ColorEntry(Text.translatable("config.text.materialisation.color"), partMaterial.isBright() ? partMaterial.getToolColor() : darkerColor(darkerColor(partMaterial.getToolColor()))));
+        addItem(new TextEntry(Text.translatable("config.text.materialisation.identifier", partMaterial.getIdentifier().toString()).formatted(Formatting.GRAY)));
+        addItem(new TextEntry(Text.translatable("config.text.materialisation.enchantability", partMaterial.getEnchantability())));
+        addItem(new TextEntry(Text.translatable("config.text.materialisation.durability", partMaterial.getToolDurability())));
+        addItem(new TextEntry(Text.translatable("config.text.materialisation.mining_level", partMaterial.getMiningLevel())));
+        addItem(new TextEntry(Text.translatable("config.text.materialisation.tool_speed", df.format(partMaterial.getToolSpeed()))));
+        addItem(new TextEntry(Text.translatable("config.text.materialisation.attack_damage", df.format(partMaterial.getAttackDamage()))));
+        addItem(new TextEntry(Text.translatable("config.text.materialisation.tool_speed_multiplier", df.format(partMaterial.getBreakingSpeedMultiplier()))));
+        addItem(new TextEntry(Text.translatable("config.text.materialisation.durability_multiplier", df.format(partMaterial.getDurabilityMultiplier()))));
     }
     
     public int darkerColor(int color) {
@@ -133,7 +131,7 @@ public class MaterialisationDescriptionListWidget extends DynamicElementListWidg
         
         public TitleMaterialOverrideEntry(MaterialisationMaterialsScreen og, PartMaterial partMaterial, Text text) {
             this.s = text;
-            Text btnText = new TranslatableText("config.button.materialisation.create_override");
+            Text btnText = Text.translatable("config.button.materialisation.create_override");
             overrideButton = new ButtonWidget(0, 0, MinecraftClient.getInstance().textRenderer.getWidth(btnText) + 10, 20, btnText, widget -> MinecraftClient.getInstance().setScreen(new MaterialisationCreateOverrideNameScreen(og, MinecraftClient.getInstance().currentScreen, partMaterial)));
         }
         

@@ -13,7 +13,6 @@ import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.state.StateManager;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -26,7 +25,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 public class MaterialisingTableBlock extends HorizontalFacingBlock {
-    private static final Text TITLE = new TranslatableText("block.materialisation.materialising_table");
+    private static final Text TITLE = Text.translatable("block.materialisation.materialising_table");
     private static final VoxelShape SHAPE;
 
     static {

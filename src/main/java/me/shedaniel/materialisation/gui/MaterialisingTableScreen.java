@@ -6,7 +6,7 @@ import me.shedaniel.materialisation.Materialisation;
 import me.shedaniel.materialisation.ModReference;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.render.GameRenderer;
@@ -17,7 +17,6 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 @SuppressWarnings("ConstantConditions")
@@ -36,7 +35,7 @@ public class MaterialisingTableScreen extends MaterialisingScreenBase<Materialis
         this.client.keyboard.setRepeatEvents(true);
         int x = (this.width - this.backgroundWidth) / 2;
         int y = (this.height - this.backgroundHeight) / 2;
-        this.nameField = new TextFieldWidget(this.textRenderer, x + 38, y + 24, 103, 12, new TranslatableText("container.repair"));
+        this.nameField = new TextFieldWidget(this.textRenderer, x + 38, y + 24, 103, 12, Text.translatable("container.repair"));
         this.nameField.setFocusUnlocked(false);
         this.nameField.changeFocus(true);
         this.nameField.setEditableColor(-1);
@@ -83,7 +82,7 @@ public class MaterialisingTableScreen extends MaterialisingScreenBase<Materialis
             this.handler.setNewItemName(string);
             PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
             buf.writeString(string);
-            ClientSidePacketRegistry.INSTANCE.sendToServer(Materialisation.MATERIALISING_TABLE_RENAME, buf);
+            ClientPlayNetworking.send(Materialisation.MATERIALISING_TABLE_RENAME, buf);
         }
     }
     

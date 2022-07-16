@@ -8,8 +8,7 @@ import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.NarratorManager;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import java.util.List;
 
@@ -29,7 +28,7 @@ public class BooleanEditEntry extends MaterialisationCreateOverrideListWidget.Ed
             BooleanEditEntry.this.value = !BooleanEditEntry.this.value;
             BooleanEditEntry.this.setEdited(true);
         });
-        this.resetButton = new ButtonWidget(0, 0, MinecraftClient.getInstance().textRenderer.getWidth(new TranslatableText("text.cloth-config.reset_value")) + 6, 20, new TranslatableText("text.cloth-config.reset_value"), widget -> {
+        this.resetButton = new ButtonWidget(0, 0, MinecraftClient.getInstance().textRenderer.getWidth(Text.translatable("text.cloth-config.reset_value")) + 6, 20, Text.translatable("text.cloth-config.reset_value"), widget -> {
             BooleanEditEntry.this.value = BooleanEditEntry.this.defaultValue;
             BooleanEditEntry.this.setEdited(false);
         });
@@ -44,7 +43,7 @@ public class BooleanEditEntry extends MaterialisationCreateOverrideListWidget.Ed
         this.resetButton.x = x + entryWidth - resetButton.getWidth();
         this.buttonWidget.x = x + entryWidth - 150;
         this.buttonWidget.setWidth(150 - resetButton.getWidth() - 2);
-        this.buttonWidget.setMessage(new LiteralText(value ? "§aYes" : "§cNo"));
+        this.buttonWidget.setMessage(Text.literal(value ? "§aYes" : "§cNo"));
         resetButton.render(stack, mouseX, mouseY, delta);
         buttonWidget.render(stack, mouseX, mouseY, delta);
     }

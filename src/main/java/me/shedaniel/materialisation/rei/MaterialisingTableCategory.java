@@ -14,7 +14,6 @@ import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import me.shedaniel.rei.plugin.common.DefaultPlugin;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +41,7 @@ public class MaterialisingTableCategory implements DisplayCategory<Materialising
 
     @Override
     public Text getTitle() {
-        return new TranslatableText("category.materialisation.materialising_table");
+        return Text.translatable("category.materialisation.materialising_table");
     }
     
     @NotNull

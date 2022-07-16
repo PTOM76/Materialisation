@@ -7,7 +7,6 @@ import me.shedaniel.materialisation.ModReference;
 import me.shedaniel.materialisation.api.*;
 import net.minecraft.item.Items;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -44,16 +43,16 @@ public class DefaultModifiers implements DefaultModifiersSupplier {
                 .description(level -> {
                     List<Text> textList = new ArrayList<>();
                     for (int i = 1; i <= 3; i++)
-                        textList.add(new TranslatableText("desc.materialisation.haste.line" + i));
+                        textList.add(Text.translatable("desc.materialisation.haste.line" + i));
                     {
                         float multiplier = 1;
                         if (level >= 1) multiplier *= 0.93;
                         if (level >= 2) multiplier *= 0.92;
                         if (level >= 3) multiplier *= 0.91;
                         if (level >= 4) multiplier *= 0.9;
-                        textList.add(new TranslatableText("desc.materialisation.haste.line4", TWO_DECIMAL_FORMATTER.format(multiplier)));
+                        textList.add(Text.translatable("desc.materialisation.haste.line4", TWO_DECIMAL_FORMATTER.format(multiplier)));
                     }
-                    textList.add(new TranslatableText("desc.materialisation.haste.line5", TWO_DECIMAL_FORMATTER.format((level <= 0) ? 1 : 1 + level * 0.5f)));
+                    textList.add(Text.translatable("desc.materialisation.haste.line5", TWO_DECIMAL_FORMATTER.format((level <= 0) ? 1 : 1 + level * 0.5f)));
                     return textList;
                 })
                 .model(new Identifier(ModReference.MOD_ID, "modifier/pickaxe_haste"), ToolType.PICKAXE)
@@ -67,9 +66,9 @@ public class DefaultModifiers implements DefaultModifiersSupplier {
                 .description(level -> {
                     List<Text> textList = new ArrayList<>();
                     for (int i = 1; i <= 3; i++)
-                        textList.add(new TranslatableText("desc.materialisation.diamond.line" + i));
-                    textList.add(new TranslatableText("desc.materialisation.diamond.line4", TWO_DECIMAL_FORMATTER.format(.9f)));
-                    textList.add(new TranslatableText("desc.materialisation.diamond.line5"));
+                        textList.add(Text.translatable("desc.materialisation.diamond.line" + i));
+                    textList.add(Text.translatable("desc.materialisation.diamond.line4", TWO_DECIMAL_FORMATTER.format(.9f)));
+                    textList.add(Text.translatable("desc.materialisation.diamond.line5"));
                     return textList;
                 })
                 .model(new Identifier(ModReference.MOD_ID, "modifier/pickaxe_diamond"), ToolType.PICKAXE)
@@ -85,8 +84,8 @@ public class DefaultModifiers implements DefaultModifiersSupplier {
                 .description(level -> {
                     List<Text> textList = new ArrayList<>();
                     for (int i = 1; i <= 3; i++)
-                        textList.add(new TranslatableText("desc.materialisation.emerald.line" + i));
-                    textList.add(new TranslatableText("desc.materialisation.emerald.line4", 300));
+                        textList.add(Text.translatable("desc.materialisation.emerald.line" + i));
+                    textList.add(Text.translatable("desc.materialisation.emerald.line4", 300));
                     return textList;
                 })
                 .model(new Identifier(ModReference.MOD_ID, "modifier/pickaxe_emerald"), ToolType.PICKAXE)
@@ -111,7 +110,7 @@ public class DefaultModifiers implements DefaultModifiersSupplier {
                 .description(level -> {
                     List<Text> textList = new ArrayList<>();
                     for (int i = 1; i <= 3; i++)
-                        textList.add(new TranslatableText("desc.materialisation.sharp.line" + i));
+                        textList.add(Text.translatable("desc.materialisation.sharp.line" + i));
                     {
                         float multiplier = 1;
                         if (level >= 1) multiplier *= 0.96;
@@ -122,9 +121,9 @@ public class DefaultModifiers implements DefaultModifiersSupplier {
                         if (level >= 6) multiplier *= 0.96;
                         if (level >= 7) multiplier *= 0.96;
                         if (level >= 8) multiplier *= 0.96;
-                        textList.add(new TranslatableText("desc.materialisation.sharp.line4", TWO_DECIMAL_FORMATTER.format(multiplier)));
+                        textList.add(Text.translatable("desc.materialisation.sharp.line4", TWO_DECIMAL_FORMATTER.format(multiplier)));
                     }
-                    textList.add(new TranslatableText("desc.materialisation.sharp.line5", TWO_DECIMAL_FORMATTER.format(1 + level * 0.17f)));
+                    textList.add(Text.translatable("desc.materialisation.sharp.line5", TWO_DECIMAL_FORMATTER.format(1 + level * 0.17f)));
                     return textList;
                 })
                 .build();
@@ -142,13 +141,13 @@ public class DefaultModifiers implements DefaultModifiersSupplier {
                 .description(level -> {
                     List<Text> textList = new ArrayList<>();
                     for (int i = 1; i <= 3; i++)
-                        textList.add(new TranslatableText("desc.materialisation.luck.line" + i));
+                        textList.add(Text.translatable("desc.materialisation.luck.line" + i));
                     {
                         float multiplier = 1;
                         if (level >= 1) multiplier *= 0.93;
                         if (level >= 2) multiplier *= 0.92;
                         if (level >= 3) multiplier *= 0.91;
-                        textList.add(new TranslatableText("desc.materialisation.luck.line4", TWO_DECIMAL_FORMATTER.format(multiplier)));
+                        textList.add(Text.translatable("desc.materialisation.luck.line4", TWO_DECIMAL_FORMATTER.format(multiplier)));
                     }
                     return textList;
                 })
@@ -162,9 +161,9 @@ public class DefaultModifiers implements DefaultModifiersSupplier {
                 .description(level -> {
                     List<Text> textList = new ArrayList<>();
                     for (int i = 1; i <= 4; i++)
-                        textList.add(new TranslatableText("desc.materialisation.fire.line" + i));
-                    textList.add(new TranslatableText("desc.materialisation.fire.line5", TWO_DECIMAL_FORMATTER.format(.93f)));
-                    textList.add(new TranslatableText("desc.materialisation.fire.line6", TWO_DECIMAL_FORMATTER.format(1 + level * 0.17f)));
+                        textList.add(Text.translatable("desc.materialisation.fire.line" + i));
+                    textList.add(Text.translatable("desc.materialisation.fire.line5", TWO_DECIMAL_FORMATTER.format(.93f)));
+                    textList.add(Text.translatable("desc.materialisation.fire.line6", TWO_DECIMAL_FORMATTER.format(1 + level * 0.17f)));
                     return textList;
                 })
                 .build();
@@ -176,8 +175,8 @@ public class DefaultModifiers implements DefaultModifiersSupplier {
                 .description(level -> {
                     List<Text> textList = new ArrayList<>();
                     for (int i = 1; i <= 3; i++)
-                        textList.add(new TranslatableText("desc.materialisation.auto_smelt.line" + i));
-                    textList.add(new TranslatableText("desc.materialisation.auto_smelt.line4", TWO_DECIMAL_FORMATTER.format(.93f)));
+                        textList.add(Text.translatable("desc.materialisation.auto_smelt.line" + i));
+                    textList.add(Text.translatable("desc.materialisation.auto_smelt.line4", TWO_DECIMAL_FORMATTER.format(.93f)));
                     return textList;
                 })
                 .build();
@@ -189,9 +188,9 @@ public class DefaultModifiers implements DefaultModifiersSupplier {
                 .description(level -> {
                     List<Text> textList = new ArrayList<>();
                     for (int i = 1; i <= 3; i++)
-                        textList.add(new TranslatableText("desc.materialisation.reinforced.line" + i));
-                    textList.add(new TranslatableText("desc.materialisation.reinforced.line4", 20 * level));
-                    textList.add(new TranslatableText("desc.materialisation.reinforced.line5", TWO_DECIMAL_FORMATTER.format(Math.pow(.96f, level))));
+                        textList.add(Text.translatable("desc.materialisation.reinforced.line" + i));
+                    textList.add(Text.translatable("desc.materialisation.reinforced.line4", 20 * level));
+                    textList.add(Text.translatable("desc.materialisation.reinforced.line5", TWO_DECIMAL_FORMATTER.format(Math.pow(.96f, level))));
                     return textList;
                 })
                 .build();

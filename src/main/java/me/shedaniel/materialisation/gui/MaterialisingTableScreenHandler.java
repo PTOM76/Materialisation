@@ -9,15 +9,16 @@ import me.shedaniel.materialisation.api.ModifierIngredient;
 import me.shedaniel.materialisation.api.PartMaterial;
 import me.shedaniel.materialisation.items.MaterialisedMiningTool;
 import me.shedaniel.materialisation.modifiers.Modifiers;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.screen.*;
+import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.LiteralText;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.Pair;
 import org.apache.commons.lang3.StringUtils;
 
@@ -52,9 +53,11 @@ public class MaterialisingTableScreenHandler extends AbstractMaterialisingHandle
                 stack = main.getStack(1).copy();
                 stack.decrement(nextDecrease);
                 main.setStack(1, stack);
-                context.run((world, blockPos) -> {
-                    ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, Materialisation.MATERIALISING_TABLE_PLAY_SOUND, new PacketByteBuf(Unpooled.buffer()));
-                });
+                if (player instanceof ServerPlayerEntity) {
+                    context.run((world, blockPos) -> {
+                        ServerPlayNetworking.send((ServerPlayerEntity)player, Materialisation.MATERIALISING_TABLE_PLAY_SOUND, new PacketByteBuf(Unpooled.buffer()));
+                    });
+                }
             }
         });
         int k;
@@ -164,7 +167,7 @@ public class MaterialisingTableScreenHandler extends AbstractMaterialisingHandle
                 if (newItemName.equals(copy.getItem().getName(copy).getString()))
                     copy.removeCustomName();
                 else
-                    copy.setCustomName(new LiteralText(this.newItemName));
+                    copy.setCustomName(Text.literal(this.newItemName));
             nextDecrease = 1;
             this.result.setStack(0, copy);
         } else if ((first.getItem() == Materialisation.PICKAXE_HEAD && second.getItem() == Materialisation.HANDLE) || (first.getItem() == Materialisation.HANDLE && second.getItem() == Materialisation.PICKAXE_HEAD)) {
@@ -187,7 +190,7 @@ public class MaterialisingTableScreenHandler extends AbstractMaterialisingHandle
                     if (newItemName.equals(copy.getItem().getName(copy).getString()))
                         copy.removeCustomName();
                     else
-                        copy.setCustomName(new LiteralText(this.newItemName));
+                        copy.setCustomName(Text.literal(this.newItemName));
                 nextDecrease = 1;
                 this.result.setStack(0, copy);
             }
@@ -211,7 +214,7 @@ public class MaterialisingTableScreenHandler extends AbstractMaterialisingHandle
                     if (newItemName.equals(copy.getItem().getName(copy).getString()))
                         copy.removeCustomName();
                     else
-                        copy.setCustomName(new LiteralText(this.newItemName));
+                        copy.setCustomName(Text.literal(this.newItemName));
                 nextDecrease = 1;
                 this.result.setStack(0, copy);
             }
@@ -235,7 +238,7 @@ public class MaterialisingTableScreenHandler extends AbstractMaterialisingHandle
                     if (newItemName.equals(copy.getItem().getName(copy).getString()))
                         copy.removeCustomName();
                     else
-                        copy.setCustomName(new LiteralText(this.newItemName));
+                        copy.setCustomName(Text.literal(this.newItemName));
                 nextDecrease = 1;
                 this.result.setStack(0, copy);
             }
@@ -259,7 +262,7 @@ public class MaterialisingTableScreenHandler extends AbstractMaterialisingHandle
                     if (newItemName.equals(copy.getItem().getName(copy).getString()))
                         copy.removeCustomName();
                     else
-                        copy.setCustomName(new LiteralText(this.newItemName));
+                        copy.setCustomName(Text.literal(this.newItemName));
                 nextDecrease = 1;
                 this.result.setStack(0, copy);
             }
@@ -283,7 +286,7 @@ public class MaterialisingTableScreenHandler extends AbstractMaterialisingHandle
                     if (newItemName.equals(copy.getItem().getName(copy).getString()))
                         copy.removeCustomName();
                     else
-                        copy.setCustomName(new LiteralText(this.newItemName));
+                        copy.setCustomName(Text.literal(this.newItemName));
                 nextDecrease = 1;
                 this.result.setStack(0, copy);
             }
@@ -307,7 +310,7 @@ public class MaterialisingTableScreenHandler extends AbstractMaterialisingHandle
                     if (newItemName.equals(copy.getItem().getName(copy).getString()))
                         copy.removeCustomName();
                     else
-                        copy.setCustomName(new LiteralText(this.newItemName));
+                        copy.setCustomName(Text.literal(this.newItemName));
                 nextDecrease = 1;
                 this.result.setStack(0, copy);
             }
@@ -361,7 +364,7 @@ public class MaterialisingTableScreenHandler extends AbstractMaterialisingHandle
             if (StringUtils.isBlank(string)) {
                 itemStack.removeCustomName();
             } else {
-                itemStack.setCustomName(new LiteralText(this.newItemName));
+                itemStack.setCustomName(Text.literal(this.newItemName));
             }
         }
         this.updateResult();

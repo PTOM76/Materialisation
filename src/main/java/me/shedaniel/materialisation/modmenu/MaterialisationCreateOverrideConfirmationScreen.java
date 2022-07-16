@@ -9,8 +9,7 @@ import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 import java.io.File;
@@ -29,7 +28,7 @@ public class MaterialisationCreateOverrideConfirmationScreen extends Screen {
     private List<MaterialisationCreateOverrideListWidget.EditEntry> editedEntries;
     
     public MaterialisationCreateOverrideConfirmationScreen(MaterialisationMaterialsScreen og, Screen parent, PartMaterial partMaterial, String fileName, double priority, List<MaterialisationCreateOverrideListWidget.EditEntry> entries) {
-        super(new TranslatableText("config.title.materialisation.override"));
+        super(Text.translatable("config.title.materialisation.override"));
         this.og = og;
         this.parent = parent;
         this.partMaterial = partMaterial;
@@ -50,11 +49,11 @@ public class MaterialisationCreateOverrideConfirmationScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        addSelectableChild(new ButtonWidget(4, 4, 75, 20, new TranslatableText("gui.back"), var1 -> {
+        addSelectableChild(new ButtonWidget(4, 4, 75, 20, Text.translatable("gui.back"), var1 -> {
             assert client != null;
             client.setScreen(parent);
         }));
-        addSelectableChild(new ButtonWidget(width - 79, 4, 75, 20, new TranslatableText("config.button.materialisation.confirm"), var1 -> {
+        addSelectableChild(new ButtonWidget(width - 79, 4, 75, 20, Text.translatable("config.button.materialisation.confirm"), var1 -> {
             if (!ConfigHelper.loading) {
                 try {
                     FileWriter fileWriter = new FileWriter(file, false);
@@ -83,22 +82,22 @@ public class MaterialisationCreateOverrideConfirmationScreen extends Screen {
         if (listWidget != null) {
             entries = listWidget.children();
         } else {
-            entries.add(new MaterialisationOverridesListWidget.TextEntry(new LiteralText(" ")));
-            entries.add(new MaterialisationOverridesListWidget.TextEntry(new TranslatableText("config.text.materialisation.create_for", new TranslatableText(partMaterial.getMaterialTranslateKey()))));
-            entries.add(new MaterialisationOverridesListWidget.TextEntry(new LiteralText(" ")));
-            entries.add(new MaterialisationOverridesListWidget.TextEntry(new TranslatableText("config.text.materialisation.create.changed_amount", editedEntries.size())));
+            entries.add(new MaterialisationOverridesListWidget.TextEntry(Text.literal(" ")));
+            entries.add(new MaterialisationOverridesListWidget.TextEntry(Text.translatable("config.text.materialisation.create_for", Text.translatable(partMaterial.getMaterialTranslateKey()))));
+            entries.add(new MaterialisationOverridesListWidget.TextEntry(Text.literal(" ")));
+            entries.add(new MaterialisationOverridesListWidget.TextEntry(Text.translatable("config.text.materialisation.create.changed_amount", editedEntries.size())));
             for (MaterialisationCreateOverrideListWidget.EditEntry entry : editedEntries) {
-                entries.add(new MaterialisationOverridesListWidget.TextEntry(new TranslatableText("config.text.materialisation.create.edited", entry.getDisplay(), entry.getDefaultValueString(), entry.getValueString())));
+                entries.add(new MaterialisationOverridesListWidget.TextEntry(Text.translatable("config.text.materialisation.create.edited", entry.getDisplay(), entry.getDefaultValueString(), entry.getValueString())));
             }
-            entries.add(new MaterialisationOverridesListWidget.TextEntry(new LiteralText(" ")));
-            entries.add(new MaterialisationOverridesListWidget.TextEntry(new TranslatableText("config.text.materialisation.create.save_to")));
-            entries.add(new MaterialisationOverridesListWidget.TextEntry(new LiteralText("  " + file.getName()).formatted(Formatting.GRAY)));
+            entries.add(new MaterialisationOverridesListWidget.TextEntry(Text.literal(" ")));
+            entries.add(new MaterialisationOverridesListWidget.TextEntry(Text.translatable("config.text.materialisation.create.save_to")));
+            entries.add(new MaterialisationOverridesListWidget.TextEntry(Text.literal("  " + file.getName()).formatted(Formatting.GRAY)));
             if (file.exists()) {
-                entries.add(new MaterialisationOverridesListWidget.TextEntry(new LiteralText(" ")));
-                entries.add(new MaterialisationOverridesListWidget.TextEntry(new TranslatableText("config.text.materialisation.create.file_already_exist_1")));
-                entries.add(new MaterialisationOverridesListWidget.TextEntry(new TranslatableText("config.text.materialisation.create.file_already_exist_2")));
+                entries.add(new MaterialisationOverridesListWidget.TextEntry(Text.literal(" ")));
+                entries.add(new MaterialisationOverridesListWidget.TextEntry(Text.translatable("config.text.materialisation.create.file_already_exist_1")));
+                entries.add(new MaterialisationOverridesListWidget.TextEntry(Text.translatable("config.text.materialisation.create.file_already_exist_2")));
             }
-            entries.add(new MaterialisationOverridesListWidget.TextEntry(new LiteralText(" ")));
+            entries.add(new MaterialisationOverridesListWidget.TextEntry(Text.literal(" ")));
         }
         addDrawableChild(listWidget = new MaterialisationOverridesListWidget(client, width, height, 28, height, DrawableHelper.OPTIONS_BACKGROUND_TEXTURE));
         for (MaterialisationOverridesListWidget.Entry entry : entries) {

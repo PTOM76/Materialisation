@@ -2,15 +2,16 @@ package me.shedaniel.materialisation.utils;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Lifecycle;
 import me.shedaniel.materialisation.ModReference;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.collection.Int2ObjectBiMap;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.registry.*;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
@@ -141,7 +142,12 @@ public class ResettableSimpleRegistry<T> extends MutableRegistry<T> {
     public Set<Map.Entry<RegistryKey<T>, T>> getEntrySet() {
         return Collections.unmodifiableSet(this.entriesByKey.entrySet());
     }
-    
+
+    @Override
+    public Set<RegistryKey<T>> getKeys() {
+        return Collections.unmodifiableSet(this.entriesByKey.keySet());
+    }
+
     @Nullable
     @SuppressWarnings("unused")
     public Optional<RegistryEntry<T>> getRandom(Random random) {
@@ -174,6 +180,11 @@ public class ResettableSimpleRegistry<T> extends MutableRegistry<T> {
 
     @Override
     public RegistryEntry<T> getOrCreateEntry(RegistryKey<T> key) {
+        return null;
+    }
+
+    @Override
+    public DataResult<RegistryEntry<T>> getOrCreateEntryDataResult(RegistryKey<T> key) {
         return null;
     }
 

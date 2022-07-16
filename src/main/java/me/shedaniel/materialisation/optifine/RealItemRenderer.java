@@ -45,7 +45,6 @@ public class RealItemRenderer {
         buffer.vertex((x), (y + height), 0.0).color(red, green, blue, alpha).next();
         buffer.vertex((x + width), (y + height), 0.0).color(red, green, blue, alpha).next();
         buffer.vertex((x + width), (y), 0.0).color(red, green, blue, alpha).next();
-        buffer.end();
-        BufferRenderer.draw(buffer);
+        BufferRenderer.drawWithShader(buffer.end());
     }
 }

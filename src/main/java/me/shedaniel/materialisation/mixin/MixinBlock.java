@@ -10,6 +10,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.recipe.SmeltingRecipe;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,12 +31,12 @@ public abstract class MixinBlock {
         if (stack.getItem() instanceof MaterialisedMiningTool) {
             int autoSmeltLevel = ((MaterialisedMiningTool) stack.getItem()).getModifierLevel(stack, DefaultModifiers.AUTO_SMELT);
             if (autoSmeltLevel > 0) {
-                Collection<Recipe<Inventory>> recipes = world.getRecipeManager().getAllOfType(RecipeType.SMELTING).values();
+                Collection<SmeltingRecipe> recipes = world.getRecipeManager().getAllOfType(RecipeType.SMELTING).values();
                 List<ItemStack> outputStacks = new ArrayList<>(cir.getReturnValue());
                 List<ItemStack> stacks = cir.getReturnValue();
                 for (int i = 0; i < stacks.size(); i++) {
                     ItemStack itemStack = stacks.get(i);
-                    Optional<Recipe<Inventory>> first = recipes.stream().filter(
+                    Optional<SmeltingRecipe> first = recipes.stream().filter(
                             recipe -> recipe.getIngredients().get(0).test(itemStack)
                     ).findFirst();
                     int finalI = i;

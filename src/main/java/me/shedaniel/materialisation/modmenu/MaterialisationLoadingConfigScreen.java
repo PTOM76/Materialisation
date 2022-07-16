@@ -10,7 +10,7 @@ import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import static me.shedaniel.materialisation.modmenu.MaterialisationMaterialsScreen.overlayBackground;
 
@@ -20,7 +20,7 @@ public class MaterialisationLoadingConfigScreen extends Screen {
     private MaterialisationMaterialsScreen previousScreen;
     
     public MaterialisationLoadingConfigScreen(MaterialisationMaterialsScreen previousScreen) {
-        super(new TranslatableText("config.title.materialisation.loading"));
+        super(Text.translatable("config.title.materialisation.loading"));
         this.previousScreen = previousScreen;
     }
     

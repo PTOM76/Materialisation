@@ -18,9 +18,8 @@ import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Rect2i;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.OrderedText;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
@@ -71,9 +70,9 @@ public class MaterialisationInstallListWidget extends DynamicElementListWidget<M
         public PackEntry(MaterialisationInstallListWidget listWidget, OnlinePack onlinePack) {
             this.listWidget = listWidget;
             this.onlinePack = onlinePack;
-            this.clickWidget = new ButtonWidget(0, 0, 100, 20, new TranslatableText("config.button.materialisation.download"), var1 -> {
+            this.clickWidget = new ButtonWidget(0, 0, 100, 20, Text.translatable("config.button.materialisation.download"), var1 -> {
                 MaterialisationInstallScreen screen = (MaterialisationInstallScreen) MinecraftClient.getInstance().currentScreen;
-                MinecraftClient.getInstance().setScreen(new MaterialisationDownloadingScreen(new TranslatableText("message.materialisation.fetching_file_data"), downloadingScreen -> {
+                MinecraftClient.getInstance().setScreen(new MaterialisationDownloadingScreen(Text.translatable("message.materialisation.fetching_file_data"), downloadingScreen -> {
                     long size;
                     String textSize;
                     String name;
@@ -100,11 +99,11 @@ public class MaterialisationInstallListWidget extends DynamicElementListWidget<M
                     }
                     downloadingScreen.queueNewScreen(new ConfirmScreen(t -> {
                         if (t) {
-                            MinecraftClient.getInstance().setScreen(new MaterialisationDownloadingScreen(new TranslatableText("message.materialisation.file_is_downloading"), screen1 -> {
+                            MinecraftClient.getInstance().setScreen(new MaterialisationDownloadingScreen(Text.translatable("message.materialisation.file_is_downloading"), screen1 -> {
                                 try {
                                     FileUtils.copyURLToFile(url, file);
                                     assert screen != null;
-                                    screen1.queueNewScreen(new MaterialisationSimpleMessageScreen(screen.getParent(), new TranslatableText("message.materialisation.file_downloaded"), I18n.translate("message.materialisation.file_is_downloaded")));
+                                    screen1.queueNewScreen(new MaterialisationSimpleMessageScreen(screen.getParent(), Text.translatable("message.materialisation.file_downloaded"), I18n.translate("message.materialisation.file_is_downloaded")));
                                 } catch (Exception e) {
                                     assert screen != null;
                                     screen1.queueNewScreen(new MaterialisationErrorInstallScreen(screen.getParent(), e));
@@ -113,7 +112,7 @@ public class MaterialisationInstallListWidget extends DynamicElementListWidget<M
                             return;
                         }
                         MinecraftClient.getInstance().setScreen(screen);
-                    }, new TranslatableText("message.materialisation.do_you_want_to_download"), new TranslatableText("message.materialisation.download_file_details", name, textSize)));
+                    }, Text.translatable("message.materialisation.do_you_want_to_download"), Text.translatable("message.materialisation.download_file_details", name, textSize)));
                 }));
             });
         }
@@ -148,7 +147,7 @@ public class MaterialisationInstallListWidget extends DynamicElementListWidget<M
             font.draw(stack, "§l§n" + onlinePack.displayName, x + 5, y + 5, 16777215);
             int i = 0;
             if (onlinePack.description != null)
-                for (OrderedText text : MinecraftClient.getInstance().textRenderer.wrapLines(new LiteralText(onlinePack.description), entryWidth)) {
+                for (OrderedText text : MinecraftClient.getInstance().textRenderer.wrapLines(Text.literal(onlinePack.description), entryWidth)) {
                     font.draw(stack, MaterialisationCloth.color(text, Formatting.GRAY), x + 5, y + 7 + 9 + i * 9, 16777215);
                     i++;
                     if (i > 1)
@@ -203,7 +202,7 @@ public class MaterialisationInstallListWidget extends DynamicElementListWidget<M
                     string_3 = "o o O";
             }
             TextRenderer font = MinecraftClient.getInstance().textRenderer;
-            drawCenteredText(stack, font, new TranslatableText("config.text.materialisation.loading_packs"), x + entryWidth / 2, y + 5, 16777215);
+            drawCenteredText(stack, font, Text.translatable("config.text.materialisation.loading_packs"), x + entryWidth / 2, y + 5, 16777215);
             drawCenteredText(stack, font, string_3, x + entryWidth / 2, y + 5 + 9, 8421504);
         }
         
@@ -227,7 +226,7 @@ public class MaterialisationInstallListWidget extends DynamicElementListWidget<M
         @Override
         public void render(MatrixStack stack, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
             TextRenderer font = MinecraftClient.getInstance().textRenderer;
-            drawCenteredText(stack, font, new TranslatableText("config.text.materialisation.failed"), x + entryWidth / 2, y + 5, 16777215);
+            drawCenteredText(stack, font, Text.translatable("config.text.materialisation.failed"), x + entryWidth / 2, y + 5, 16777215);
         }
         
         @Override

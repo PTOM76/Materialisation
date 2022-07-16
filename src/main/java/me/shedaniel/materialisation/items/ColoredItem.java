@@ -10,7 +10,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
@@ -63,14 +62,14 @@ public class ColoredItem extends Item {
             PartMaterial material = MaterialisationUtils.getMaterialFromPart(stack);
             if (material != null) {
                 if (this == Materialisation.HANDLE) {
-                    list.add(new TranslatableText("text.materialisation.tool_handle_durability_multiplier", MaterialisationUtils.getColoring(material.getDurabilityMultiplier()).toString() + "x" + MaterialisationUtils.TWO_DECIMAL_FORMATTER.format(material.getDurabilityMultiplier())));
-                    list.add(new TranslatableText("text.materialisation.tool_handle_speed_multiplier", MaterialisationUtils.getColoring(material.getBreakingSpeedMultiplier()).toString() + "x" + MaterialisationUtils.TWO_DECIMAL_FORMATTER.format(material.getBreakingSpeedMultiplier())));
+                    list.add(Text.translatable("text.materialisation.tool_handle_durability_multiplier", MaterialisationUtils.getColoring(material.getDurabilityMultiplier()).toString() + "x" + MaterialisationUtils.TWO_DECIMAL_FORMATTER.format(material.getDurabilityMultiplier())));
+                    list.add(Text.translatable("text.materialisation.tool_handle_speed_multiplier", MaterialisationUtils.getColoring(material.getBreakingSpeedMultiplier()).toString() + "x" + MaterialisationUtils.TWO_DECIMAL_FORMATTER.format(material.getBreakingSpeedMultiplier())));
                 }
                 if (this == Materialisation.PICKAXE_HEAD || this == Materialisation.AXE_HEAD || this == Materialisation.SHOVEL_HEAD || this == Materialisation.HAMMER_HEAD || this == Materialisation.MEGAAXE_HEAD || this == Materialisation.SWORD_BLADE) {
                     if (this != Materialisation.SWORD_BLADE)
-                        list.add(new TranslatableText("text.materialisation.head_part_speed", Formatting.YELLOW.toString() + MaterialisationUtils.TWO_DECIMAL_FORMATTER.format(getBaseToolBreakingSpeed(this, material))));
-                    list.add(new TranslatableText("text.materialisation.head_part_durability", Formatting.YELLOW.toString() + MaterialisationUtils.TWO_DECIMAL_FORMATTER.format(material.getToolDurability())));
-                    list.add(new TranslatableText("text.materialisation.head_part_damage", Formatting.YELLOW.toString() + MaterialisationUtils.TWO_DECIMAL_FORMATTER.format(getExtraDamage(this) + material.getAttackDamage())));
+                        list.add(Text.translatable("text.materialisation.head_part_speed", Formatting.YELLOW.toString() + MaterialisationUtils.TWO_DECIMAL_FORMATTER.format(getBaseToolBreakingSpeed(this, material))));
+                    list.add(Text.translatable("text.materialisation.head_part_durability", Formatting.YELLOW.toString() + MaterialisationUtils.TWO_DECIMAL_FORMATTER.format(material.getToolDurability())));
+                    list.add(Text.translatable("text.materialisation.head_part_damage", Formatting.YELLOW.toString() + MaterialisationUtils.TWO_DECIMAL_FORMATTER.format(getExtraDamage(this) + material.getAttackDamage())));
                 }
             }
         }
@@ -80,8 +79,8 @@ public class ColoredItem extends Item {
     public Text getName(ItemStack itemStack_1) {
         PartMaterial part = MaterialisationUtils.getMaterialFromPart(itemStack_1);
         if (part != null)
-            return new TranslatableText("item.materialisation.materialised_" + Registry.ITEM.getId(this).getPath(), new TranslatableText(part.getMaterialTranslateKey()));
-        return new TranslatableText(this.getTranslationKey(itemStack_1));
+            return Text.translatable("item.materialisation.materialised_" + Registry.ITEM.getId(this).getPath(), Text.translatable(part.getMaterialTranslateKey()));
+        return Text.translatable(this.getTranslationKey(itemStack_1));
     }
     
 }

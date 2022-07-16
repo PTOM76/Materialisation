@@ -12,7 +12,7 @@ import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.NarratorManager;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import java.util.Locale;
 import java.util.UUID;
@@ -30,7 +30,7 @@ public class MaterialisationCreateOverrideNameScreen extends Screen {
     private ButtonWidget continueButton;
     
     public MaterialisationCreateOverrideNameScreen(MaterialisationMaterialsScreen og, Screen parent, PartMaterial partMaterial) {
-        super(new TranslatableText("config.title.materialisation.new_override"));
+        super(Text.translatable("config.title.materialisation.new_override"));
         this.og = og;
         this.parent = parent;
         this.partMaterial = partMaterial;
@@ -51,11 +51,11 @@ public class MaterialisationCreateOverrideNameScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        addSelectableChild(new ButtonWidget(4, 4, 75, 20, new TranslatableText("gui.back"), var1 -> {
+        addSelectableChild(new ButtonWidget(4, 4, 75, 20, Text.translatable("gui.back"), var1 -> {
             assert client != null;
             client.setScreen(parent);
         }));
-        addSelectableChild(continueButton = new ButtonWidget(width - 79, 4, 75, 20, new TranslatableText("config.button.materialisation.continue"), var1 -> {
+        addSelectableChild(continueButton = new ButtonWidget(width - 79, 4, 75, 20, Text.translatable("config.button.materialisation.continue"), var1 -> {
             assert client != null;
             client.setScreen(new MaterialisationCreateOverrideScreen(og, this, partMaterial, fileName.getText().isEmpty() ? randomFileName : fileName.getText(), priority.getText().isEmpty() ? 0 : Double.parseDouble(priority.getText())));
         }));
@@ -114,9 +114,9 @@ public class MaterialisationCreateOverrideNameScreen extends Screen {
         RenderSystem.enableTexture();
         RenderSystem.disableBlend();
         drawCenteredText(stack, textRenderer, title, width / 2, 10, 16777215);
-        drawTextWithShadow(stack, textRenderer, new TranslatableText("config.text.materialisation.override_json_file_name"), width / 4, 36, -6250336);
-        drawTextWithShadow(stack, textRenderer, new TranslatableText("config.text.materialisation.override_json_file_saved"), width / 4, 74, -6250336);
-        drawTextWithShadow(stack, textRenderer, new TranslatableText("config.text.materialisation.priority"), width / 4, 104, -6250336);
+        drawTextWithShadow(stack, textRenderer, Text.translatable("config.text.materialisation.override_json_file_name"), width / 4, 36, -6250336);
+        drawTextWithShadow(stack, textRenderer, Text.translatable("config.text.materialisation.override_json_file_saved"), width / 4, 74, -6250336);
+        drawTextWithShadow(stack, textRenderer, Text.translatable("config.text.materialisation.priority"), width / 4, 104, -6250336);
         super.render(stack, mouseX, mouseY, delta);
     }
 }

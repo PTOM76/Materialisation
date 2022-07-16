@@ -9,10 +9,8 @@ import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 import static me.shedaniel.materialisation.modmenu.MaterialisationMaterialsScreen.overlayBackground;
 
@@ -40,7 +38,7 @@ public class MaterialisationSimpleMessageScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        addSelectableChild(new ButtonWidget(4, 4, 75, 20, new TranslatableText("gui.back"), var1 -> {
+        addSelectableChild(new ButtonWidget(4, 4, 75, 20, Text.translatable("gui.back"), var1 -> {
             assert client != null;
             client.setScreen(parent);
         }));
@@ -66,7 +64,7 @@ public class MaterialisationSimpleMessageScreen extends Screen {
         drawCenteredText(stack, textRenderer, title, width / 2, 10, 16777215);
         int y = 40;
         for (String s : text.split("\n")) {
-            for (OrderedText s1 : textRenderer.wrapLines(new LiteralText(s), width - 20)) {
+            for (OrderedText s1 : textRenderer.wrapLines(Text.literal(s), width - 20)) {
                 textRenderer.draw(stack, s1, (float)(width / 2 - textRenderer.getWidth(s1) / 2), y, 16777215);
                 y += 9;
             }

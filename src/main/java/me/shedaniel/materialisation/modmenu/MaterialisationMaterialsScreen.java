@@ -16,7 +16,7 @@ import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class MaterialisationMaterialsScreen extends Screen {
     private MaterialisationDescriptionListWidget descriptionList;
     
     protected MaterialisationMaterialsScreen(Screen parent) {
-        super(new TranslatableText("config.title.materialisation"));
+        super(Text.translatable("config.title.materialisation"));
         this.parent = parent;
     }
     
@@ -68,17 +68,17 @@ public class MaterialisationMaterialsScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        addSelectableChild(new ButtonWidget(width - 104, 4, 100, 20, new TranslatableText("config.button.materialisation.install"), var1 -> {
+        addSelectableChild(new ButtonWidget(width - 104, 4, 100, 20, Text.translatable("config.button.materialisation.install"), var1 -> {
             assert client != null;
             client.setScreen(new MaterialisationInstallScreen(this));
         }));
-        addSelectableChild(new ButtonWidget(59, 4, 85, 20, new TranslatableText("config.button.materialisation.reload"), var1 -> {
+        addSelectableChild(new ButtonWidget(59, 4, 85, 20, Text.translatable("config.button.materialisation.reload"), var1 -> {
             if (!ConfigHelper.loading) {
                 MinecraftClient.getInstance().setScreen(new MaterialisationLoadingConfigScreen(this));
                 ConfigHelper.loadConfigAsync();
             }
         }));
-        addSelectableChild(new ButtonWidget(4, 4, 50, 20, new TranslatableText("gui.back"), var1 -> {
+        addSelectableChild(new ButtonWidget(4, 4, 50, 20, Text.translatable("gui.back"), var1 -> {
             assert client != null;
             client.setScreen(parent);
         }));

@@ -10,7 +10,7 @@ import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import java.util.List;
 import java.util.Locale;
@@ -28,7 +28,7 @@ public class MaterialisationCreateOverrideScreen extends Screen {
     private ButtonWidget createButton;
     
     public MaterialisationCreateOverrideScreen(MaterialisationMaterialsScreen og, Screen parent, PartMaterial partMaterial, String fileName, double priority) {
-        super(new TranslatableText("config.title.materialisation.override"));
+        super(Text.translatable("config.title.materialisation.override"));
         this.og = og;
         this.parent = parent;
         this.partMaterial = partMaterial;
@@ -49,11 +49,11 @@ public class MaterialisationCreateOverrideScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        addSelectableChild(new ButtonWidget(4, 4, 75, 20, new TranslatableText("gui.back"), var1 -> {
+        addSelectableChild(new ButtonWidget(4, 4, 75, 20, Text.translatable("gui.back"), var1 -> {
             assert client != null;
             client.setScreen(parent);
         }));
-        addSelectableChild(createButton = new ButtonWidget(width - 79, 4, 75, 20, new TranslatableText("config.button.materialisation.create"), var1 -> {
+        addSelectableChild(createButton = new ButtonWidget(width - 79, 4, 75, 20, Text.translatable("config.button.materialisation.create"), var1 -> {
             assert client != null;
             client.setScreen(new MaterialisationCreateOverrideConfirmationScreen(og, this, partMaterial, fileName, priority, listWidget.children()));
         }));

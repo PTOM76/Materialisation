@@ -33,13 +33,13 @@ public class MaterialisationCloth {
     }
     
     public static Text wrap(StringVisitable text) {
-        MutableText result = new LiteralText("");
+        MutableText result = Text.literal("");
         text.visit(new Text.StyledVisitor<Text>() {
-            MutableText text = new LiteralText("");
+            MutableText text = Text.literal("");
             
             @Override
             public Optional<Text> accept(Style style, String asString) {
-                result.append(new LiteralText(asString).fillStyle(style));
+                result.append(Text.literal(asString).fillStyle(style));
                 return Optional.empty();
             }
         }, Style.EMPTY).orElse(Text.of(text.getString()));

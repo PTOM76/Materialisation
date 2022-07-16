@@ -9,7 +9,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.NarratorManager;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import java.util.List;
 
@@ -39,7 +39,7 @@ public class IntEditEntry extends MaterialisationCreateOverrideListWidget.EditEn
         buttonWidget.setMaxLength(1000);
         buttonWidget.setText(defaultValue + "");
         buttonWidget.setChangedListener(ss -> IntEditEntry.this.setEdited(!ss.equals(defaultValue + "")));
-        this.resetButton = new ButtonWidget(0, 0, MinecraftClient.getInstance().textRenderer.getWidth(new TranslatableText("text.cloth-config.reset_value")) + 6, 20, new TranslatableText("text.cloth-config.reset_value"), widget -> {
+        this.resetButton = new ButtonWidget(0, 0, MinecraftClient.getInstance().textRenderer.getWidth(Text.translatable("text.cloth-config.reset_value")) + 6, 20, Text.translatable("text.cloth-config.reset_value"), widget -> {
             buttonWidget.setText(IntEditEntry.this.defaultValue + "");
             IntEditEntry.this.setEdited(false);
         });

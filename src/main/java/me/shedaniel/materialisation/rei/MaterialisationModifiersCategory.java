@@ -45,7 +45,7 @@ public class MaterialisationModifiersCategory implements DisplayCategory<Materia
 
     @Override
     public Text getTitle() {
-        return new TranslatableText("category.materialisation.modifiers");
+        return Text.translatable("category.materialisation.modifiers");
     }
 
     @Override
@@ -69,7 +69,7 @@ public class MaterialisationModifiersCategory implements DisplayCategory<Materia
         if (level != 1 || Objects.requireNonNull(display.getModifier().getGraphicalDescriptionRange()).getLeft() != 1 || display.getModifier().getGraphicalDescriptionRange().getRight() != 1)
             title = I18n.translate("modifier." + modifierId.getNamespace() + "." + modifierId.getPath()) + " " + RomanNumber.toRoman(level);
         else title = I18n.translate("modifier." + modifierId.getNamespace() + "." + modifierId.getPath());
-        widgets.add(Widgets.createLabel(new Point(bounds.x + 22, bounds.y + 6), new LiteralText(title)).color(0xFF404040, 0xFFBBBBBB).leftAligned());
+        widgets.add(Widgets.createLabel(new Point(bounds.x + 22, bounds.y + 6), Text.literal(title)).color(0xFF404040, 0xFFBBBBBB).leftAligned());
         Modifier modifier = display.getModifier();
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
         int currentY = 24;

@@ -1,7 +1,6 @@
 package me.shedaniel.materialisation;
 
 import me.shedaniel.materialisation.api.Modifier;
-import me.shedaniel.materialisation.api.PartMaterials;
 import me.shedaniel.materialisation.blocks.MaterialPreparerBlock;
 import me.shedaniel.materialisation.blocks.MaterialisingTableBlock;
 import me.shedaniel.materialisation.config.ConfigHelper;
@@ -11,7 +10,6 @@ import me.shedaniel.materialisation.gui.MaterialisingTableScreenHandler;
 import me.shedaniel.materialisation.items.*;
 import me.shedaniel.materialisation.utils.ResettableSimpleRegistry;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.SharedConstants;

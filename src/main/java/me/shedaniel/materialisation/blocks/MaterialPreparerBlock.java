@@ -17,7 +17,6 @@ import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.stat.Stats;
 import net.minecraft.state.StateManager;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -30,7 +29,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 public class MaterialPreparerBlock extends HorizontalFacingBlock implements NamedScreenHandlerFactory {
-    private static final Text TITLE = new TranslatableText("block.materialisation.material_preparer");
+    private static final Text TITLE = Text.translatable("block.materialisation.material_preparer");
     private static final VoxelShape SHAPE;
     
     static {
@@ -104,6 +103,6 @@ public class MaterialPreparerBlock extends HorizontalFacingBlock implements Name
 
     @Override
     public Text getDisplayName() {
-        return new TranslatableText(getDefaultState().getBlock().getTranslationKey());
+        return Text.translatable(getDefaultState().getBlock().getTranslationKey());
     }
 }

@@ -11,10 +11,8 @@ import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
 import java.util.ArrayList;
@@ -30,7 +28,7 @@ public class MaterialisationErrorInstallScreen extends Screen {
     private MaterialisationOverridesListWidget listWidget;
     
     public MaterialisationErrorInstallScreen(Screen parent, Throwable throwable) {
-        super(new TranslatableText("message.materialisation.installation_errored").formatted(Formatting.RED));
+        super(Text.translatable("message.materialisation.installation_errored").formatted(Formatting.RED));
         this.parent = parent;
         this.throwable = throwable;
         throwable.printStackTrace();
@@ -49,7 +47,7 @@ public class MaterialisationErrorInstallScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        addSelectableChild(new ButtonWidget(4, 4, 75, 20, new TranslatableText("gui.back"), var1 -> {
+        addSelectableChild(new ButtonWidget(4, 4, 75, 20, Text.translatable("gui.back"), var1 -> {
             assert client != null;
             client.setScreen(parent);
         }));
@@ -60,7 +58,7 @@ public class MaterialisationErrorInstallScreen extends Screen {
             s.add("  at " + traceElement);
         }
         for (String s1 : s) {
-            for (OrderedText s2 : textRenderer.wrapLines(new LiteralText(s1), width - 40)) {
+            for (OrderedText s2 : textRenderer.wrapLines(Text.literal(s1), width - 40)) {
                 entries.add(new MaterialisationOverridesListWidget.TextEntry((Text)s2));
             }
         }

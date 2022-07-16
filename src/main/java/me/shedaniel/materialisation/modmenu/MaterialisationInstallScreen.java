@@ -10,7 +10,7 @@ import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 
 import java.io.InputStreamReader;
@@ -31,7 +31,7 @@ public class MaterialisationInstallScreen extends Screen {
     private MaterialisationInstallListWidget listWidget;
     
     protected MaterialisationInstallScreen(Screen parent) {
-        super(new TranslatableText("config.title.materialisation.install_new"));
+        super(Text.translatable("config.title.materialisation.install_new"));
         this.parent = parent;
     }
     
@@ -69,15 +69,15 @@ public class MaterialisationInstallScreen extends Screen {
                 listWidget.addItem(new MaterialisationInstallListWidget.PackEntry(listWidget, onlinePack));
             }
         }
-        addSelectableChild(new ButtonWidget(4, 4, 100, 20, new TranslatableText("config.button.materialisation.refresh"), var1 -> {
+        addSelectableChild(new ButtonWidget(4, 4, 100, 20, Text.translatable("config.button.materialisation.refresh"), var1 -> {
             if (!loading)
                 refresh();
         }));
-        addSelectableChild(new ButtonWidget(4, height - 24, 100, 20, new TranslatableText("gui.back"), var1 -> {
+        addSelectableChild(new ButtonWidget(4, height - 24, 100, 20, Text.translatable("gui.back"), var1 -> {
             assert client != null;
             client.setScreen(parent);
         }));
-        addSelectableChild(new ButtonWidget(width - 104, 4, 100, 20, new TranslatableText("config.button.materialisation.open_folder"), var1 -> Util.getOperatingSystem().open(ConfigHelper.MATERIALS_DIRECTORY)));
+        addSelectableChild(new ButtonWidget(width - 104, 4, 100, 20, Text.translatable("config.button.materialisation.open_folder"), var1 -> Util.getOperatingSystem().open(ConfigHelper.MATERIALS_DIRECTORY)));
     }
     
     public void refresh() {

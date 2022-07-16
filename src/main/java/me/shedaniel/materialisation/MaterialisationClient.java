@@ -1,5 +1,6 @@
 package me.shedaniel.materialisation;
 
+import com.mojang.datafixers.util.Pair;
 import me.shedaniel.materialisation.api.Modifier;
 import me.shedaniel.materialisation.api.PartMaterial;
 import me.shedaniel.materialisation.api.PartMaterials;
@@ -15,10 +16,9 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
-import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
@@ -50,6 +50,8 @@ import net.minecraft.world.BlockRenderView;
 import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import net.minecraft.util.math.random.Random;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -63,7 +65,7 @@ public class MaterialisationClient implements ClientModInitializer {
     public void onInitializeClient() {
         ScreenRegistry.register(Materialisation.MATERIALISING_TABLE_SCREEN_HANDLER, MaterialisingTableScreen::new);
         ScreenRegistry.register(Materialisation.MATERIAL_PREPARER_SCREEN_HANDLER, MaterialPreparerScreen::new);
-        ClientSidePacketRegistry.INSTANCE.register(Materialisation.MATERIALISING_TABLE_PLAY_SOUND, (packetContext, packetByteBuf) ->
+        ClientPlayNetworking.registerGlobalReceiver(Materialisation.MATERIALISING_TABLE_PLAY_SOUND, (client, handler, buf, responseSender) ->
                 MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.BLOCK_ANVIL_USE, 1, 1))
         );
         Item[] colorableToolParts = {
@@ -141,7 +143,7 @@ public class MaterialisationClient implements ClientModInitializer {
                         }
                         
                         @Override
-                        public Collection<SpriteIdentifier> getTextureDependencies(Function<Identifier, UnbakedModel> unbakedModelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> unresolvedTextureReferences) {
+                        public Collection<SpriteIdentifier> getTextureDependencies(Function<Identifier, UnbakedModel> unbakedModelGetter, Set<Pair<String, String>> unresolvedTextureReferences) {
                             return Collections.emptyList();
                         }
                         
@@ -177,7 +179,7 @@ public class MaterialisationClient implements ClientModInitializer {
         public boolean isVanillaAdapter() {
             return false;
         }
-        
+
         @Override
         public void emitBlockQuads(BlockRenderView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context) {
             
@@ -246,7 +248,7 @@ public class MaterialisationClient implements ClientModInitializer {
         public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction face, Random random) {
             return Collections.emptyList();
         }
-        
+
         @Override
         public boolean useAmbientOcclusion() {
             return true;
@@ -274,7 +276,7 @@ public class MaterialisationClient implements ClientModInitializer {
         
         private static final Lazy<ModelTransformation> ITEM_HANDHELD = new Lazy<>(() -> {
             try {
-                Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier("minecraft:models/item/handheld.json"));
+                Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier("minecraft:models/item/handheld.json")).get();
                 return JsonUnbakedModel.deserialize(new BufferedReader(new InputStreamReader(resource.getInputStream()))).getTransformations();
             } catch (Throwable throwable) {
                 throw new RuntimeException(throwable);
