@@ -177,7 +177,7 @@ public class MaterialisationInstallListWidget extends DynamicElementListWidget<M
 
         @Override
         public List<? extends Selectable> narratables() {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
 
         @Override
@@ -214,7 +214,7 @@ public class MaterialisationInstallListWidget extends DynamicElementListWidget<M
 
         @Override
         public List<? extends Selectable> narratables() {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
 
         @Override
@@ -237,7 +237,7 @@ public class MaterialisationInstallListWidget extends DynamicElementListWidget<M
 
         @Override
         public List<? extends Selectable> narratables() {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
 
         @Override
@@ -266,7 +266,7 @@ public class MaterialisationInstallListWidget extends DynamicElementListWidget<M
 
         @Override
         public List<? extends Selectable> narratables() {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
 
         @Override

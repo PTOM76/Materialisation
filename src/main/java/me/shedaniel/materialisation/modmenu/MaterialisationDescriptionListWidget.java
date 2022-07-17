@@ -57,12 +57,14 @@ public class MaterialisationDescriptionListWidget extends DynamicElementListWidg
         addItem(new TextEntry(Text.translatable("config.text.materialisation.identifier", packInfo.getIdentifier().toString()).formatted(Formatting.GRAY)));
         if (!packInfo.getDescription().isEmpty()) {
             for (OrderedText text : MinecraftClient.getInstance().textRenderer.wrapLines(Text.literal(packInfo.getDescription()), getItemWidth())) {
-                addItem(new TextEntry(MaterialisationCloth.color((Text)text, Formatting.GRAY)));
+                if (text instanceof Text)
+                    addItem(new TextEntry(MaterialisationCloth.color((Text)text, Formatting.GRAY)));
             }
         }
         addItem(new EmptyEntry(11));
         for (OrderedText text : MinecraftClient.getInstance().textRenderer.wrapLines((Text.translatable("config.text.materialisation.materials", materialsPack.getKnownMaterials().count(), materialsPack.getKnownMaterials().map(PartMaterial::getMaterialTranslateKey).map(I18n::translate).collect(Collectors.joining(", ")))), getItemWidth())) {
-            addItem(new TextEntry(MaterialisationCloth.color((Text)text, Formatting.GRAY)));
+            if (text instanceof Text)
+                addItem(new TextEntry(MaterialisationCloth.color((Text)text, Formatting.GRAY)));
         }
     }
     
@@ -114,7 +116,7 @@ public class MaterialisationDescriptionListWidget extends DynamicElementListWidg
 
         @Override
         public List<? extends Selectable> narratables() {
-            return null;
+            return Collections.emptyList();
         }
 
         @Override
@@ -150,7 +152,7 @@ public class MaterialisationDescriptionListWidget extends DynamicElementListWidg
 
         @Override
         public List<? extends Selectable> narratables() {
-            return null;
+            return Collections.emptyList();
         }
 
         @Override
@@ -179,7 +181,7 @@ public class MaterialisationDescriptionListWidget extends DynamicElementListWidg
 
         @Override
         public List<? extends Selectable> narratables() {
-            return null;
+            return Collections.emptyList();
         }
 
         @Override
@@ -208,7 +210,7 @@ public class MaterialisationDescriptionListWidget extends DynamicElementListWidg
 
         @Override
         public List<? extends Selectable> narratables() {
-            return null;
+            return Collections.emptyList();
         }
 
         @Override

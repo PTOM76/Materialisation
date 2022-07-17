@@ -10,6 +10,7 @@ import net.minecraft.client.util.NarratorManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
+import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings("CanBeFinal")
@@ -50,7 +51,7 @@ public class BooleanEditEntry extends MaterialisationCreateOverrideListWidget.Ed
 
     @Override
     public List<? extends Selectable> narratables() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

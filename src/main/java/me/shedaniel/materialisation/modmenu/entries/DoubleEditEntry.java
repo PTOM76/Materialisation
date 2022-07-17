@@ -13,6 +13,7 @@ import net.minecraft.text.Text;
 
 import java.text.DecimalFormat;
 import java.text.ParsePosition;
+import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings("CanBeFinal")
@@ -59,7 +60,7 @@ public class DoubleEditEntry extends MaterialisationCreateOverrideListWidget.Edi
 
     @Override
     public List<? extends Selectable> narratables() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
