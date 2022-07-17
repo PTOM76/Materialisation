@@ -30,6 +30,8 @@ public class MaterialisationInstallScreen extends Screen {
     private Screen parent;
     private MaterialisationInstallListWidget listWidget;
 
+    public ButtonWidget refreshButton, backButton, openFolderButton;
+
     protected MaterialisationInstallScreen(Screen parent) {
         super(Text.translatable("config.title.materialisation.install_new"));
         this.parent = parent;
@@ -69,15 +71,15 @@ public class MaterialisationInstallScreen extends Screen {
                 listWidget.addItem(new MaterialisationInstallListWidget.PackEntry(listWidget, onlinePack));
             }
         }
-        addSelectableChild(new ButtonWidget(4, 4, 100, 20, Text.translatable("config.button.materialisation.refresh"), var1 -> {
+        addSelectableChild(refreshButton = new ButtonWidget(4, 4, 100, 20, Text.translatable("config.button.materialisation.refresh"), var1 -> {
             if (!loading)
                 refresh();
         }));
-        addSelectableChild(new ButtonWidget(4, height - 24, 100, 20, Text.translatable("gui.back"), var1 -> {
+        addSelectableChild(backButton = new ButtonWidget(4, height - 24, 100, 20, Text.translatable("gui.back"), var1 -> {
             assert client != null;
             client.setScreen(parent);
         }));
-        addSelectableChild(new ButtonWidget(width - 104, 4, 100, 20, Text.translatable("config.button.materialisation.open_folder"), var1 -> Util.getOperatingSystem().open(ConfigHelper.MATERIALS_DIRECTORY)));
+        addSelectableChild(openFolderButton = new ButtonWidget(width - 104, 4, 100, 20, Text.translatable("config.button.materialisation.open_folder"), var1 -> Util.getOperatingSystem().open(ConfigHelper.MATERIALS_DIRECTORY)));
     }
 
     public void refresh() {
@@ -120,9 +122,12 @@ public class MaterialisationInstallScreen extends Screen {
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float delta) {
         renderBackgroundTexture(0);
+        super.render(stack, mouseX, mouseY, delta);
         listWidget.render(stack, mouseX, mouseY, delta);
         overlayBackground(0, height - 28, width, height, 64, 64, 64, 255, 255);
         drawCenteredText(stack, textRenderer, title, width / 2, 10, 16777215);
-        super.render(stack, mouseX, mouseY, delta);
+        refreshButton.render(stack, mouseX, mouseY, delta);
+        backButton.render(stack, mouseX, mouseY, delta);
+        openFolderButton.render(stack, mouseX, mouseY, delta);
     }
 }

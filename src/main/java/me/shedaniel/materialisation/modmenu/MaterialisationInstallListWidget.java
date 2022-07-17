@@ -112,7 +112,7 @@ public class MaterialisationInstallListWidget extends DynamicElementListWidget<M
                             }));
                             return;
                         }
-                        MinecraftClient.getInstance().setScreen(screen);
+                        MinecraftClient.getInstance().setScreen(screen.getParent());
                     }, Text.translatable("message.materialisation.do_you_want_to_download"), Text.translatable("message.materialisation.download_file_details", name, textSize)));
                 }));
             });
