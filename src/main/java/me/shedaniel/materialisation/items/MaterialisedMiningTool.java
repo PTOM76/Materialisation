@@ -79,7 +79,7 @@ public interface MaterialisedMiningTool extends FabricItem {
             return getExtraDamage(((MaterialisedMiningTool) item).getToolType());
         return 0f;
     }
-    
+
     default float getMiningSpeedMultiplier(ItemStack stack, BlockState state) {
         TagKey<Block> minableBlock = getEffectiveBlocks();
         if (minableBlock == null)
@@ -89,42 +89,42 @@ public interface MaterialisedMiningTool extends FabricItem {
         else
             return 1.0F;
     }
-    
+
     default int getMiningLevel(ItemStack stack) {
         return MaterialisationUtils.getToolMiningLevel(stack);
     }
-    
+
     default float postProcessMiningSpeed(BlockState state, ItemStack stack, float currentSpeed, boolean isEffective) {
         return MaterialisationUtils.getToolDurability(stack) <= 0 ? -1 : currentSpeed;
     }
-    
+
     default int getEnchantability(ItemStack stack) {
         return MaterialisationUtils.getToolEnchantability(stack);
     }
-    
+
     @Nonnull
     default ToolType getToolType() {
         return ToolType.UNKNOWN;
     }
-    
+
     default void setModifierLevel(ItemStack stack, Modifier modifier, int level) {
         Identifier id = Materialisation.MODIFIERS.getId(modifier);
         if (id == null)
             return;
         setModifierLevel(stack, id, level);
     }
-    
+
     default int getModifierLevel(ItemStack stack, Modifier modifier) {
         Identifier id = Materialisation.MODIFIERS.getId(modifier);
         if (id == null)
             return 0;
         return getModifierLevel(stack, id);
     }
-    
+
     default int getModifierLevel(ItemStack stack, Identifier modifier) {
         return getModifierLevel(stack, modifier.toString());
     }
-    
+
     default int getModifierLevel(ItemStack stack, String modifier) {
         NbtCompound tag = stack.getNbt();
         if (tag != null && tag.contains("modifiers")) {
@@ -134,7 +134,7 @@ public interface MaterialisedMiningTool extends FabricItem {
         }
         return 0;
     }
-    
+
     default void setModifierLevel(ItemStack stack, Identifier modifier, int level) {
         NbtCompound tag = stack.getOrCreateNbt();
         if (!tag.contains("modifiers"))
@@ -142,7 +142,7 @@ public interface MaterialisedMiningTool extends FabricItem {
         NbtCompound modifiers = tag.getCompound("modifiers");
         modifiers.putInt(modifier.toString(), level);
     }
-    
+
     default Multimap<EntityAttribute, EntityAttributeModifier> getModifiers(EquipmentSlot slot, ItemStack stack) {
         if (slot != EquipmentSlot.MAINHAND) return EMPTY;
         double attackDamage = MaterialisationUtils.getToolDurability(stack) > 0 ? MaterialisationUtils.getToolAttackDamage(stack) : -10000;
