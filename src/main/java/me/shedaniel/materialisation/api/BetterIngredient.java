@@ -3,11 +3,12 @@ package me.shedaniel.materialisation.api;
 import me.shedaniel.materialisation.config.MaterialisationConfig;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Lazy;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,12 +25,12 @@ public class BetterIngredient {
     @SuppressWarnings("CanBeFinal")
     private transient Lazy<ItemStack[]> stacks = new Lazy<>(() -> {
         if (type == Type.ITEM)
-            return new ItemStack[]{new ItemStack(Registry.ITEM.get(new Identifier(content)), count)};
-        TagKey<Item> tag = TagKey.of(Registry.ITEM_KEY, new Identifier(content));
+            return new ItemStack[]{new ItemStack(Registries.ITEM.get(new Identifier(content)), count)};
+        TagKey<Item> tag = TagKey.of(RegistryKeys.ITEM, new Identifier(content));
         List<ItemStack> itemStacks = new ArrayList<>();
         if (tag != null) {
             try {
-                for (RegistryEntry<Item> entry : Registry.ITEM.getEntryList(tag).get()) {
+                for (RegistryEntry<Item> entry : Registries.ITEM.getEntryList(tag).get()) {
                     itemStacks.add(new ItemStack(entry.value(), count));
                 }
             } catch (NoSuchElementException e) {
@@ -50,11 +51,11 @@ public class BetterIngredient {
     }
     
     public static BetterIngredient fromItem(Item item) {
-        return new BetterIngredient(Type.ITEM, Registry.ITEM.getId(item).toString());
+        return new BetterIngredient(Type.ITEM, Registries.ITEM.getId(item).toString());
     }
     
     public static BetterIngredient fromItem(Item item, int count) {
-        return new BetterIngredient(Type.ITEM, Registry.ITEM.getId(item).toString(), count);
+        return new BetterIngredient(Type.ITEM, Registries.ITEM.getId(item).toString(), count);
     }
     
     public static BetterIngredient fromItem(Identifier item) {

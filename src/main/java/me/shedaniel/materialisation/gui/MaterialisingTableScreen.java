@@ -32,7 +32,6 @@ public class MaterialisingTableScreen extends MaterialisingScreenBase<Materialis
     
     @Override
     protected void setup() {
-        this.client.keyboard.setRepeatEvents(true);
         int x = (this.width - this.backgroundWidth) / 2;
         int y = (this.height - this.backgroundHeight) / 2;
         this.nameField = new TextFieldWidget(this.textRenderer, x + 38, y + 24, 103, 12, Text.translatable("container.repair"));
@@ -57,7 +56,6 @@ public class MaterialisingTableScreen extends MaterialisingScreenBase<Materialis
     @Override
     public void removed() {
         super.removed();
-        this.client.keyboard.setRepeatEvents(false);
         this.handler.removeListener(this);
     }
     
@@ -93,7 +91,7 @@ public class MaterialisingTableScreen extends MaterialisingScreenBase<Materialis
     
     @Override
     protected void drawBackground(MatrixStack matrixStack, float delta, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
         int posX = x;

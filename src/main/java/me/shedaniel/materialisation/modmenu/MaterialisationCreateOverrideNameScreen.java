@@ -51,14 +51,14 @@ public class MaterialisationCreateOverrideNameScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        addSelectableChild(new ButtonWidget(4, 4, 75, 20, Text.translatable("gui.back"), var1 -> {
+        addSelectableChild(ButtonWidget.builder(Text.translatable("gui.back"), var1 -> {
             assert client != null;
             client.setScreen(parent);
-        }));
-        addSelectableChild(continueButton = new ButtonWidget(width - 79, 4, 75, 20, Text.translatable("config.button.materialisation.continue"), var1 -> {
+        }).dimensions(4, 4, 75, 20).build());
+        addSelectableChild(continueButton = ButtonWidget.builder(Text.translatable("config.button.materialisation.continue"), var1 -> {
             assert client != null;
             client.setScreen(new MaterialisationCreateOverrideScreen(og, this, partMaterial, fileName.getText().isEmpty() ? randomFileName : fileName.getText(), priority.getText().isEmpty() ? 0 : Double.parseDouble(priority.getText())));
-        }));
+        }).dimensions(width - 79, 4, 75, 20).build());
         assert client != null;
         addSelectableChild(fileName = new TextFieldWidget(client.textRenderer, width / 4, 50, width / 2, 18, fileName, NarratorManager.EMPTY) {
             @Override

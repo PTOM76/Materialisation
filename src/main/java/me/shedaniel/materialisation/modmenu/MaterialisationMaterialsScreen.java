@@ -74,20 +74,20 @@ public class MaterialisationMaterialsScreen extends Screen {
         super.init();
         addDrawableChild(materialList = new MaterialisationMaterialListWidget(client, width / 2 - 10, height, 28 + 5, height - 5, DrawableHelper.OPTIONS_BACKGROUND_TEXTURE));
         addDrawableChild(descriptionList = new MaterialisationDescriptionListWidget(client, width / 2 - 10, height, 28 + 5, height - 5, DrawableHelper.OPTIONS_BACKGROUND_TEXTURE));
-        addSelectableChild(installButton = new ButtonWidget(width - 104, 4, 100, 20, Text.translatable("config.button.materialisation.install"), var1 -> {
+        addSelectableChild(installButton = ButtonWidget.builder(Text.translatable("config.button.materialisation.install"), var1 -> {
             assert client != null;
             client.setScreen(new MaterialisationInstallScreen(this));
-        }));
-        addSelectableChild(reloadButton = new ButtonWidget(59, 4, 85, 20, Text.translatable("config.button.materialisation.reload"), var1 -> {
+        }).dimensions(width - 104, 4, 100, 20).build());
+        addSelectableChild(reloadButton = ButtonWidget.builder(Text.translatable("config.button.materialisation.reload"), var1 -> {
             if (!ConfigHelper.loading) {
                 MinecraftClient.getInstance().setScreen(new MaterialisationLoadingConfigScreen(this));
                 ConfigHelper.loadConfigAsync();
             }
-        }));
-        addSelectableChild(backButton = new ButtonWidget(4, 4, 50, 20, Text.translatable("gui.back"), var1 -> {
+        }).dimensions(59, 4, 85, 20).build());
+        addSelectableChild(backButton = ButtonWidget.builder(Text.translatable("gui.back"), var1 -> {
             assert client != null;
             client.setScreen(parent);
-        }));
+        }).dimensions(4, 4, 50, 20).build());
         materialList.setLeftPos(5);
         descriptionList.setLeftPos(width / 2 + 5);
         if (lastDescription != null) {

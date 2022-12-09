@@ -71,15 +71,15 @@ public class MaterialisationInstallScreen extends Screen {
                 listWidget.addItem(new MaterialisationInstallListWidget.PackEntry(listWidget, onlinePack));
             }
         }
-        addSelectableChild(refreshButton = new ButtonWidget(4, 4, 100, 20, Text.translatable("config.button.materialisation.refresh"), var1 -> {
+        addSelectableChild(refreshButton = ButtonWidget.builder(Text.translatable("config.button.materialisation.refresh"), var1 -> {
             if (!loading)
                 refresh();
-        }));
-        addSelectableChild(backButton = new ButtonWidget(4, height - 24, 100, 20, Text.translatable("gui.back"), var1 -> {
+        }).dimensions(4, 4, 100, 20).build());
+        addSelectableChild(backButton = ButtonWidget.builder(Text.translatable("gui.back"), var1 -> {
             assert client != null;
             client.setScreen(parent);
-        }));
-        addSelectableChild(openFolderButton = new ButtonWidget(width - 104, 4, 100, 20, Text.translatable("config.button.materialisation.open_folder"), var1 -> Util.getOperatingSystem().open(ConfigHelper.MATERIALS_DIRECTORY)));
+        }).dimensions(4, height - 24, 100, 20).build());
+        addSelectableChild(openFolderButton = ButtonWidget.builder(Text.translatable("config.button.materialisation.open_folder"), var1 -> Util.getOperatingSystem().open(ConfigHelper.MATERIALS_DIRECTORY)).dimensions(width - 104, 4, 100, 20).build());
     }
 
     public void refresh() {

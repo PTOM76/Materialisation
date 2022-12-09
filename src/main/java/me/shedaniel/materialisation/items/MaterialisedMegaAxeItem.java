@@ -21,16 +21,16 @@ import net.minecraft.item.AxeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
-import net.minecraft.tag.BlockTags;
-import net.minecraft.tag.TagKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
@@ -109,11 +109,11 @@ public class MaterialisedMegaAxeItem extends AxeItem implements MaterialisedMini
     }
     
     private boolean isLogs(BlockState state) {
-        return BlockTags.LOGS == TagKey.of(Registry.BLOCK_KEY, Registry.BLOCK.getId(state.getBlock()));
+        return BlockTags.LOGS == TagKey.of(RegistryKeys.BLOCK, Registries.BLOCK.getId(state.getBlock()));
     }
     
     private boolean isLeaves(BlockState state) {
-        return BlockTags.LEAVES == TagKey.of(Registry.BLOCK_KEY, Registry.BLOCK.getId(state.getBlock()));
+        return BlockTags.LEAVES == TagKey.of(RegistryKeys.BLOCK, Registries.BLOCK.getId(state.getBlock()));
     }
     
     @Nonnull

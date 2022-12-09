@@ -134,14 +134,14 @@ public class MaterialisationDescriptionListWidget extends DynamicElementListWidg
         public TitleMaterialOverrideEntry(MaterialisationMaterialsScreen og, PartMaterial partMaterial, Text text) {
             this.s = text;
             Text btnText = Text.translatable("config.button.materialisation.create_override");
-            overrideButton = new ButtonWidget(0, 0, MinecraftClient.getInstance().textRenderer.getWidth(btnText) + 10, 20, btnText, widget -> MinecraftClient.getInstance().setScreen(new MaterialisationCreateOverrideNameScreen(og, MinecraftClient.getInstance().currentScreen, partMaterial)));
+            overrideButton = ButtonWidget.builder(btnText, widget -> MinecraftClient.getInstance().setScreen(new MaterialisationCreateOverrideNameScreen(og, MinecraftClient.getInstance().currentScreen, partMaterial))).dimensions(0, 0, MinecraftClient.getInstance().textRenderer.getWidth(btnText) + 10, 20).build();
         }
         
         @Override
         public void render(MatrixStack stack, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
             MinecraftClient.getInstance().textRenderer.drawWithShadow(stack, s, x, y + 10, 16777215);
-            overrideButton.x = x + entryWidth - overrideButton.getWidth();
-            overrideButton.y = y;
+            overrideButton.setX(x + entryWidth - overrideButton.getWidth());
+            overrideButton.setY(y);
             overrideButton.render(stack, mouseX, mouseY, delta);
         }
         

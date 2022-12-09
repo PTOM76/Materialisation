@@ -10,6 +10,7 @@ import me.shedaniel.materialisation.gui.MaterialisingTableScreenHandler;
 import me.shedaniel.materialisation.items.*;
 import me.shedaniel.materialisation.utils.ResettableSimpleRegistry;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.SharedConstants;
@@ -17,9 +18,11 @@ import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemGroups;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,14 +55,26 @@ public class Materialisation implements ModInitializer {
     public static final Item SWORD_BLADE = new ColoredItem(new Item.Settings());
     public static final Item HAMMER_HEAD = new ColoredItem(new Item.Settings());
     public static final Item MEGAAXE_HEAD = new ColoredItem(new Item.Settings());
-    public static final Item BLANK_PATTERN = new PatternItem(new Item.Settings().group(ItemGroup.MATERIALS));
-    public static final Item TOOL_HANDLE_PATTERN = new PatternItem(new Item.Settings().group(ItemGroup.MATERIALS));
-    public static final Item PICKAXE_HEAD_PATTERN = new PatternItem(new Item.Settings().group(ItemGroup.MATERIALS));
-    public static final Item AXE_HEAD_PATTERN = new PatternItem(new Item.Settings().group(ItemGroup.MATERIALS));
-    public static final Item SHOVEL_HEAD_PATTERN = new PatternItem(new Item.Settings().group(ItemGroup.MATERIALS));
-    public static final Item SWORD_BLADE_PATTERN = new PatternItem(new Item.Settings().group(ItemGroup.MATERIALS));
-    public static final Item HAMMER_HEAD_PATTERN = new PatternItem(new Item.Settings().group(ItemGroup.MATERIALS));
-    public static final Item MEGAAXE_HEAD_PATTERN = new PatternItem(new Item.Settings().group(ItemGroup.MATERIALS));
+    public static final Item BLANK_PATTERN = new PatternItem(new Item.Settings());
+    public static final Item TOOL_HANDLE_PATTERN = new PatternItem(new Item.Settings());
+    public static final Item PICKAXE_HEAD_PATTERN = new PatternItem(new Item.Settings());
+    public static final Item AXE_HEAD_PATTERN = new PatternItem(new Item.Settings());
+    public static final Item SHOVEL_HEAD_PATTERN = new PatternItem(new Item.Settings());
+    public static final Item SWORD_BLADE_PATTERN = new PatternItem(new Item.Settings());
+    public static final Item HAMMER_HEAD_PATTERN = new PatternItem(new Item.Settings());
+    public static final Item MEGAAXE_HEAD_PATTERN = new PatternItem(new Item.Settings());
+
+    static {
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> entries.add(BLANK_PATTERN));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> entries.add(TOOL_HANDLE_PATTERN));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> entries.add(PICKAXE_HEAD_PATTERN));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> entries.add(AXE_HEAD_PATTERN));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> entries.add(SHOVEL_HEAD_PATTERN));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> entries.add(SWORD_BLADE_PATTERN));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> entries.add(HAMMER_HEAD_PATTERN));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> entries.add(MEGAAXE_HEAD_PATTERN));
+    }
+    
     public static final Registry<Modifier> MODIFIERS = new ResettableSimpleRegistry<>("modifiers");
     public static MaterialisationConfig config;
 
@@ -78,8 +93,8 @@ public class Materialisation implements ModInitializer {
     @Override
     public void onInitialize() {
         MaterialisationModifierMaterials.register();
-        registerBlock("materialising_table", MATERIALISING_TABLE, ItemGroup.DECORATIONS);
-        registerBlock("material_preparer", MATERIAL_PREPARER, ItemGroup.DECORATIONS);
+        registerBlock("materialising_table", MATERIALISING_TABLE, ItemGroups.FUNCTIONAL);
+        registerBlock("material_preparer", MATERIAL_PREPARER, ItemGroups.FUNCTIONAL);
         ServerPlayNetworking.registerGlobalReceiver(MATERIALISING_TABLE_RENAME, (server, player, handler, buf, packetSender) -> {
             if (player.currentScreenHandler instanceof MaterialisingTableScreenHandler) {
                 MaterialisingTableScreenHandler container = (MaterialisingTableScreenHandler)player.currentScreenHandler;
@@ -123,15 +138,16 @@ public class Materialisation implements ModInitializer {
     
     @SuppressWarnings("SameParameterValue")
     private void registerBlock(String name, Block block, ItemGroup group) {
-        registerBlock(name, block, new Item.Settings().group(group));
+        registerBlock(name, block, new Item.Settings());
+        ItemGroupEvents.modifyEntriesEvent(group).register(entries -> entries.add(block));
     }
     
     private void registerBlock(String name, Block block, Item.Settings settings) {
-        Registry.register(Registry.BLOCK, new Identifier(ModReference.MOD_ID, name), block);
+        Registry.register(Registries.BLOCK, new Identifier(ModReference.MOD_ID, name), block);
         registerItem(name, new BlockItem(block, settings));
     }
     
     private void registerItem(String name, Item item) {
-        Registry.register(Registry.ITEM, new Identifier(ModReference.MOD_ID, name), item);
+        Registry.register(Registries.ITEM, new Identifier(ModReference.MOD_ID, name), item);
     }
 }

@@ -40,20 +40,20 @@ public class IntEditEntry extends MaterialisationCreateOverrideListWidget.EditEn
         buttonWidget.setMaxLength(1000);
         buttonWidget.setText(defaultValue + "");
         buttonWidget.setChangedListener(ss -> IntEditEntry.this.setEdited(!ss.equals(defaultValue + "")));
-        this.resetButton = new ButtonWidget(0, 0, MinecraftClient.getInstance().textRenderer.getWidth(Text.translatable("text.cloth-config.reset_value")) + 6, 20, Text.translatable("text.cloth-config.reset_value"), widget -> {
+        this.resetButton = ButtonWidget.builder(Text.translatable("text.cloth-config.reset_value"), widget -> {
             buttonWidget.setText(IntEditEntry.this.defaultValue + "");
             IntEditEntry.this.setEdited(false);
-        });
+        }).dimensions(0, 0, MinecraftClient.getInstance().textRenderer.getWidth(Text.translatable("text.cloth-config.reset_value")) + 6, 20).build();
         this.widgets = Lists.newArrayList(buttonWidget, resetButton);
     }
 
     @Override
     public void render(MatrixStack stack, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
         super.render(stack, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isSelected, delta);
-        this.resetButton.y = y;
-        this.buttonWidget.y = y + 2;
-        this.resetButton.x = x + entryWidth - resetButton.getWidth();
-        this.buttonWidget.x = x + entryWidth - 150 + 2;
+        this.resetButton.setY(y);
+        this.buttonWidget.setY(y + 2);
+        this.resetButton.setX(x + entryWidth - resetButton.getWidth());
+        this.buttonWidget.setX(x + entryWidth - 150 + 2);
         this.buttonWidget.setWidth(150 - resetButton.getWidth() - 2 - 4);
         resetButton.render(stack, mouseX, mouseY, delta);
         buttonWidget.render(stack, mouseX, mouseY, delta);

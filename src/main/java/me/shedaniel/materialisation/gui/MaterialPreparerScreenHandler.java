@@ -248,7 +248,7 @@ public class MaterialPreparerScreenHandler extends AbstractMaterialisingHandlerB
     
     @Override
     @SuppressWarnings("ConstantConditions")
-    public ItemStack transferSlot(PlayerEntity player, int index) {
+    public ItemStack quickMove(PlayerEntity player, int index) {
         ItemStack itemStack1 = ItemStack.EMPTY;
         Slot slot1 = this.slots.get(index);
         if (slot1 != null && slot1.hasStack()) {

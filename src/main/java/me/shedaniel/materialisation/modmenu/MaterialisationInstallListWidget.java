@@ -71,7 +71,7 @@ public class MaterialisationInstallListWidget extends DynamicElementListWidget<M
         public PackEntry(MaterialisationInstallListWidget listWidget, OnlinePack onlinePack) {
             this.listWidget = listWidget;
             this.onlinePack = onlinePack;
-            this.clickWidget = new ButtonWidget(0, 0, 100, 20, Text.translatable("config.button.materialisation.download"), var1 -> {
+            this.clickWidget = ButtonWidget.builder(Text.translatable("config.button.materialisation.download"), var1 -> {
                 MaterialisationInstallScreen screen = (MaterialisationInstallScreen) MinecraftClient.getInstance().currentScreen;
                 MinecraftClient.getInstance().setScreen(new MaterialisationDownloadingScreen(Text.translatable("message.materialisation.fetching_file_data"), downloadingScreen -> {
                     long size;
@@ -115,7 +115,7 @@ public class MaterialisationInstallListWidget extends DynamicElementListWidget<M
                         MinecraftClient.getInstance().setScreen(screen.getParent());
                     }, Text.translatable("message.materialisation.do_you_want_to_download"), Text.translatable("message.materialisation.download_file_details", name, textSize)));
                 }));
-            });
+            }).dimensions(0, 0, 100, 20).build();
         }
 
         @Override
@@ -154,8 +154,8 @@ public class MaterialisationInstallListWidget extends DynamicElementListWidget<M
                     if (i > 1)
                         break;
                 }
-            clickWidget.x = x + entryWidth - 110;
-            clickWidget.y = y + entryHeight / 2 - 10;
+            clickWidget.setX(x + entryWidth - 110);
+            clickWidget.setY(y + entryHeight / 2 - 10);
             clickWidget.render(stack, mouseX, mouseY, delta);
         }
 

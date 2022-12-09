@@ -9,9 +9,9 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -79,7 +79,7 @@ public class ColoredItem extends Item {
     public Text getName(ItemStack itemStack_1) {
         PartMaterial part = MaterialisationUtils.getMaterialFromPart(itemStack_1);
         if (part != null)
-            return Text.translatable("item.materialisation.materialised_" + Registry.ITEM.getId(this).getPath(), Text.translatable(part.getMaterialTranslateKey()));
+            return Text.translatable("item.materialisation.materialised_" + Registries.ITEM.getId(this).getPath(), Text.translatable(part.getMaterialTranslateKey()));
         return Text.translatable(this.getTranslationKey(itemStack_1));
     }
     

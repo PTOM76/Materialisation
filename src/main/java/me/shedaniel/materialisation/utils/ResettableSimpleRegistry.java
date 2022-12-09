@@ -4,15 +4,17 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Lifecycle;
 import me.shedaniel.materialisation.ModReference;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.*;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.entry.RegistryEntryList;
+import net.minecraft.registry.entry.RegistryEntryOwner;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.collection.Int2ObjectBiMap;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.util.registry.*;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,7 +24,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class ResettableSimpleRegistry<T> extends MutableRegistry<T> {
+public class ResettableSimpleRegistry<T> implements MutableRegistry<T> {
     protected static final Logger LOGGER = LogManager.getLogger();
     protected Int2ObjectBiMap<T> indexedEntries = Int2ObjectBiMap.create(256);
     protected BiMap<Identifier, T> entries = HashBiMap.create();
@@ -32,12 +34,12 @@ public class ResettableSimpleRegistry<T> extends MutableRegistry<T> {
     private int nextId;
     
     public ResettableSimpleRegistry(String id) {
-        super(RegistryKey.ofRegistry(new Identifier(ModReference.MOD_ID, id)), Lifecycle.stable());
+        super();
     }
 
     @SuppressWarnings("unused")
     public ResettableSimpleRegistry(RegistryKey<Registry<T>> registryKey, Lifecycle lifecycle) {
-        super(registryKey, lifecycle);
+        super();
     }
     
     public void reset() {
@@ -69,18 +71,23 @@ public class ResettableSimpleRegistry<T> extends MutableRegistry<T> {
     }
 
     @Override
-    public RegistryEntry<T> add(RegistryKey<T> key, T entry, Lifecycle lifecycle) {
-        return this.set(this.nextId, key, entry, lifecycle);
-    }
-
-    @Override
-    public RegistryEntry<T> replace(OptionalInt rawId, RegistryKey<T> key, T newEntry, Lifecycle lifecycle) {
-        return null;
+    public RegistryEntry.Reference<T> add(RegistryKey<T> key, T entry, Lifecycle lifecycle) {
+        return (RegistryEntry.Reference<T>) this.set(this.nextId, key, entry, lifecycle);
     }
 
     @Override
     public boolean isEmpty() {
         return false;
+    }
+
+    @Override
+    public RegistryEntryLookup<T> createMutableEntryLookup() {
+        return null;
+    }
+
+    @Override
+    public RegistryKey<? extends Registry<T>> getKey() {
+        return null;
     }
 
     @Nullable
@@ -150,7 +157,7 @@ public class ResettableSimpleRegistry<T> extends MutableRegistry<T> {
 
     @Nullable
     @SuppressWarnings("unused")
-    public Optional<RegistryEntry<T>> getRandom(Random random) {
+    public Optional<RegistryEntry.Reference<T>> getRandom(Random random) {
         if (this.randomEntries == null) {
             Collection<T> collection = this.entries.values();
             if (collection.isEmpty()) {
@@ -161,7 +168,7 @@ public class ResettableSimpleRegistry<T> extends MutableRegistry<T> {
         }
 
         //noinspection unchecked
-        return Optional.of(RegistryEntry.of((T) Util.getRandom(this.randomEntries, random)));
+        return Optional.of((RegistryEntry.Reference<T>) RegistryEntry.of((T) Util.getRandom(this.randomEntries, random)));
     }
     
     public boolean containsId(Identifier id) {
@@ -179,28 +186,23 @@ public class ResettableSimpleRegistry<T> extends MutableRegistry<T> {
     }
 
     @Override
-    public RegistryEntry<T> getOrCreateEntry(RegistryKey<T> key) {
-        return null;
-    }
-
-    @Override
-    public DataResult<RegistryEntry<T>> getOrCreateEntryDataResult(RegistryKey<T> key) {
-        return null;
-    }
-
-    @Override
     public RegistryEntry.Reference<T> createEntry(T value) {
         return null;
     }
 
     @Override
-    public Optional<RegistryEntry<T>> getEntry(int rawId) {
+    public Optional<RegistryEntry.Reference<T>> getEntry(int rawId) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<RegistryEntry<T>> getEntry(RegistryKey<T> key) {
+    public Optional<RegistryEntry.Reference<T>> getEntry(RegistryKey<T> key) {
         return Optional.empty();
+    }
+
+    @Override
+    public RegistryEntry<T> getEntry(T value) {
+        return null;
     }
 
     @Override
@@ -229,11 +231,6 @@ public class ResettableSimpleRegistry<T> extends MutableRegistry<T> {
     }
 
     @Override
-    public boolean containsTag(TagKey<T> tag) {
-        return false;
-    }
-
-    @Override
     public void clearTags() {
 
     }
@@ -241,6 +238,16 @@ public class ResettableSimpleRegistry<T> extends MutableRegistry<T> {
     @Override
     public void populateTags(Map<TagKey<T>, List<RegistryEntry<T>>> tagEntries) {
 
+    }
+
+    @Override
+    public RegistryEntryOwner<T> getEntryOwner() {
+        return null;
+    }
+
+    @Override
+    public RegistryWrapper.Impl<T> getReadOnlyWrapper() {
+        return null;
     }
 
     @SuppressWarnings("unused")

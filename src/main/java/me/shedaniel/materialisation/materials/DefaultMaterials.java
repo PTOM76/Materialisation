@@ -8,7 +8,7 @@ import me.shedaniel.materialisation.api.PartMaterial;
 import me.shedaniel.materialisation.config.ConfigPack;
 import me.shedaniel.materialisation.config.ConfigPackInfo;
 import net.minecraft.item.Items;
-import net.minecraft.tag.ItemTags;
+import net.minecraft.registry.tag.ItemTags;
 
 import java.util.Collections;
 import java.util.List;

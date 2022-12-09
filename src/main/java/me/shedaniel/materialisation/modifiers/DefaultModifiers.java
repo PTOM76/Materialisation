@@ -6,9 +6,9 @@ import me.shedaniel.materialisation.MaterialisationModifierMaterials;
 import me.shedaniel.materialisation.ModReference;
 import me.shedaniel.materialisation.api.*;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

@@ -39,12 +39,12 @@ public class RealItemRenderer {
     
     @SuppressWarnings("SameParameterValue")
     private static void renderGuiQuad(BufferBuilder buffer, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
         buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
         buffer.vertex((x), y, 0.0).color(red, green, blue, alpha).next();
         buffer.vertex((x), (y + height), 0.0).color(red, green, blue, alpha).next();
         buffer.vertex((x + width), (y + height), 0.0).color(red, green, blue, alpha).next();
         buffer.vertex((x + width), (y), 0.0).color(red, green, blue, alpha).next();
-        BufferRenderer.drawWithShader(buffer.end());
+        BufferRenderer.drawWithGlobalProgram(buffer.end());
     }
 }

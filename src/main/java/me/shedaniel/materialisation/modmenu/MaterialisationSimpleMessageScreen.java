@@ -38,10 +38,10 @@ public class MaterialisationSimpleMessageScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        addSelectableChild(new ButtonWidget(4, 4, 75, 20, Text.translatable("gui.back"), var1 -> {
+        addSelectableChild(ButtonWidget.builder(Text.translatable("gui.back"), var1 -> {
             assert client != null;
             client.setScreen(parent);
-        }));
+        }).dimensions(4, 4, 75, 20).build());
     }
     
     @Override

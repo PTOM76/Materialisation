@@ -26,7 +26,6 @@ public class MaterialPreparerScreen extends MaterialisingScreenBase<MaterialPrep
     }
 
     protected void setup() {
-        this.client.keyboard.setRepeatEvents(true);
         int x = (this.width - this.backgroundWidth) / 2;
         int y = (this.height - this.backgroundHeight) / 2;
     }
@@ -34,7 +33,6 @@ public class MaterialPreparerScreen extends MaterialisingScreenBase<MaterialPrep
     public void removed() {
         super.removed();
         assert this.client != null;
-        this.client.keyboard.setRepeatEvents(false);
         this.handler.removeListener(this);
     }
     
@@ -55,7 +53,7 @@ public class MaterialPreparerScreen extends MaterialisingScreenBase<MaterialPrep
 
     @Override
     protected void drawBackground(MatrixStack matrixStack, float v, int i, int i1) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
         this.drawTexture(matrixStack, x, y, 0, 0, this.backgroundWidth, this.backgroundHeight);

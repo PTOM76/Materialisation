@@ -49,11 +49,11 @@ public class MaterialisationCreateOverrideConfirmationScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        addSelectableChild(new ButtonWidget(4, 4, 75, 20, Text.translatable("gui.back"), var1 -> {
+        addSelectableChild(ButtonWidget.builder(Text.translatable("gui.back"), var1 -> {
             assert client != null;
             client.setScreen(parent);
-        }));
-        addSelectableChild(new ButtonWidget(width - 79, 4, 75, 20, Text.translatable("config.button.materialisation.confirm"), var1 -> {
+        }).dimensions(4, 4, 75, 20).build());
+        addSelectableChild(ButtonWidget.builder(Text.translatable("config.button.materialisation.confirm"), var1 -> {
             if (!ConfigHelper.loading) {
                 try {
                     FileWriter fileWriter = new FileWriter(file, false);
@@ -77,7 +77,7 @@ public class MaterialisationCreateOverrideConfirmationScreen extends Screen {
                     e.printStackTrace();
                 }
             }
-        }));
+        }).dimensions(width - 79, 4, 75, 20).build());
         List<MaterialisationOverridesListWidget.Entry> entries = Lists.newArrayList();
         if (listWidget != null) {
             entries = listWidget.children();

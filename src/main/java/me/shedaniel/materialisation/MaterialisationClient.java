@@ -26,8 +26,8 @@ import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.fabricmc.fabric.impl.client.indigo.renderer.helper.GeometryHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.item.ClampedModelPredicateProvider;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
-import net.minecraft.client.item.UnclampedModelPredicateProvider;
 import net.minecraft.client.render.model.*;
 import net.minecraft.client.render.model.json.JsonUnbakedModel;
 import net.minecraft.client.render.model.json.ModelOverrideList;
@@ -38,20 +38,19 @@ import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.resource.Resource;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Lazy;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.BlockRenderView;
 
 import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import net.minecraft.util.math.random.Random;
-
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -77,7 +76,8 @@ public class MaterialisationClient implements ClientModInitializer {
                 Materialisation.PICKAXE_HEAD,
                 Materialisation.AXE_HEAD
         };
-        UnclampedModelPredicateProvider brightProvider = (itemStack, world, livingEntity, seed) -> MaterialisationUtils.isHandleBright(itemStack) ? 1 : 0;
+        // UnclampedModelPredicateProvider
+        ClampedModelPredicateProvider brightProvider = (itemStack, world, livingEntity, seed) -> MaterialisationUtils.isHandleBright(itemStack) ? 1 : 0;
         ColorProviderRegistry.ITEM.register(MaterialisationUtils::getItemLayerColor, colorableToolParts);
         for (Item colorableToolPart : colorableToolParts) {
             ModelPredicateProviderRegistry.register(colorableToolPart, new Identifier(ModReference.MOD_ID, "bright"), brightProvider);
@@ -89,7 +89,7 @@ public class MaterialisationClient implements ClientModInitializer {
                 Materialisation.MATERIALISED_AXE,
                 Materialisation.MATERIALISED_SWORD,
                 Materialisation.MATERIALISED_HAMMER
-        ).map(Registry.ITEM::getId).collect(Collectors.toList());
+        ).map(Registries.ITEM::getId).collect(Collectors.toList());
         Renderer renderer = RendererAccess.INSTANCE.getRenderer();
         ModelLoadingRegistry.INSTANCE.registerModelProvider((resourceManager, consumer) -> {
             for (Identifier identifier : identifiers) {
@@ -141,16 +141,16 @@ public class MaterialisationClient implements ClientModInitializer {
                         public Collection<Identifier> getModelDependencies() {
                             return Collections.emptyList();
                         }
-                        
+
                         @Override
-                        public Collection<SpriteIdentifier> getTextureDependencies(Function<Identifier, UnbakedModel> unbakedModelGetter, Set<Pair<String, String>> unresolvedTextureReferences) {
-                            return Collections.emptyList();
+                        public void setParents(Function<Identifier, UnbakedModel> modelLoader) {
+
                         }
-                        
+
                         @Nullable
                         @Override
-                        public BakedModel bake(ModelLoader loader, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings rotationContainer, Identifier modelId) {
-                            return new DynamicToolBakedModel(identifier, Registry.ITEM.get(identifier));
+                        public BakedModel bake(Baker baker, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings rotationContainer, Identifier modelId) {
+                            return new DynamicToolBakedModel(identifier, Registries.ITEM.get(identifier));
                         }
                     };
                 }

@@ -49,14 +49,14 @@ public class MaterialisationCreateOverrideScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        addSelectableChild(new ButtonWidget(4, 4, 75, 20, Text.translatable("gui.back"), var1 -> {
+        addSelectableChild(ButtonWidget.builder(Text.translatable("gui.back"), var1 -> {
             assert client != null;
             client.setScreen(parent);
-        }));
-        addSelectableChild(createButton = new ButtonWidget(width - 79, 4, 75, 20, Text.translatable("config.button.materialisation.create"), var1 -> {
+        }).dimensions(4, 4, 75, 20).build());
+        addSelectableChild(createButton = ButtonWidget.builder(Text.translatable("config.button.materialisation.create"), var1 -> {
             assert client != null;
             client.setScreen(new MaterialisationCreateOverrideConfirmationScreen(og, this, partMaterial, fileName, priority, listWidget.children()));
-        }));
+        }).dimensions(width - 79, 4, 75, 20).build());
         List<MaterialisationCreateOverrideListWidget.EditEntry> entries = Lists.newArrayList();
         if (listWidget != null) {
             entries = listWidget.children();
