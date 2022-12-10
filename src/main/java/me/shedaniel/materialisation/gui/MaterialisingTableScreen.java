@@ -42,6 +42,7 @@ public class MaterialisingTableScreen extends MaterialisingScreenBase<Materialis
         this.nameField.setTextFieldFocused(false); // setHasBorder
         this.nameField.setMaxLength(35);
         this.nameField.setChangedListener(this::onRenamed);
+        this.nameField.setDrawsBackground(false);
         this.addDrawableChild(this.nameField);
         this.setInitialFocus(this.nameField);
     }

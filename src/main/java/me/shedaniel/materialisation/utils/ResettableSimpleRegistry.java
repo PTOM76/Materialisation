@@ -5,7 +5,6 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Lifecycle;
-import me.shedaniel.materialisation.ModReference;
 import net.minecraft.registry.*;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.entry.RegistryEntryList;
@@ -32,14 +31,20 @@ public class ResettableSimpleRegistry<T> implements MutableRegistry<T> {
     private Set<RegistryKey<T>> loadedKeys = Sets.newIdentityHashSet();
     protected Object[] randomEntries;
     private int nextId;
-    
+    private String id;
+    private RegistryKey<Registry<T>> registryKey;
+    private Lifecycle lifecycle;
+
     public ResettableSimpleRegistry(String id) {
         super();
+        this.id = id;
     }
 
     @SuppressWarnings("unused")
     public ResettableSimpleRegistry(RegistryKey<Registry<T>> registryKey, Lifecycle lifecycle) {
         super();
+        this.registryKey = registryKey;
+        this.lifecycle = lifecycle;
     }
     
     public void reset() {
@@ -80,6 +85,7 @@ public class ResettableSimpleRegistry<T> implements MutableRegistry<T> {
         return false;
     }
 
+    @Nullable
     @Override
     public RegistryEntryLookup<T> createMutableEntryLookup() {
         return null;
@@ -87,7 +93,7 @@ public class ResettableSimpleRegistry<T> implements MutableRegistry<T> {
 
     @Override
     public RegistryKey<? extends Registry<T>> getKey() {
-        return null;
+        return registryKey;
     }
 
     @Nullable
@@ -134,7 +140,7 @@ public class ResettableSimpleRegistry<T> implements MutableRegistry<T> {
 
     @Override
     public Lifecycle getLifecycle() {
-        return null;
+        return lifecycle;
     }
 
     public Optional<T> getOrEmpty(@Nullable Identifier id) {
@@ -240,11 +246,13 @@ public class ResettableSimpleRegistry<T> implements MutableRegistry<T> {
 
     }
 
+    @Nullable
     @Override
     public RegistryEntryOwner<T> getEntryOwner() {
         return null;
     }
 
+    @Nullable
     @Override
     public RegistryWrapper.Impl<T> getReadOnlyWrapper() {
         return null;
