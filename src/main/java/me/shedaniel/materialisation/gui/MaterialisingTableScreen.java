@@ -18,6 +18,7 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.lwjgl.glfw.GLFW;
 
 @SuppressWarnings("ConstantConditions")
 @Environment(EnvType.CLIENT)
@@ -62,12 +63,12 @@ public class MaterialisingTableScreen extends MaterialisingScreenBase<Materialis
     
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == 256) {
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
             assert this.client != null;
             assert this.client.player != null;
             this.client.player.closeHandledScreen();
         }
-        return this.nameField.keyPressed(keyCode, scanCode, modifiers) && this.nameField.isActive() || super.keyPressed(keyCode, scanCode, modifiers);
+        return this.nameField.keyPressed(keyCode, scanCode, modifiers) && this.nameField.isFocused() || super.keyPressed(keyCode, scanCode, modifiers);
     }
     
     private void onRenamed(String name) {
