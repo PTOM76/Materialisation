@@ -5,12 +5,13 @@
   "description": "Customise the tools yes you can do it.\n-shedaniel",
   "version": "${version}",
   "authors": [
+    "Pitan",
     "shedaniel"
   ],
   "icon": "icon.png",
   "contact": {
-    "sources": "https://github.com/shedaniel/MaterialisedTools",
-    "issues": "https://github.com/shedaniel/MaterialisedTools/issues"
+    "sources": "https://github.com/PTOM76/MaterialisedTools",
+    "issues": "https://github.com/PTOM76/MaterialisedTools/issues"
   },
   "entrypoints": {
     "main": [
