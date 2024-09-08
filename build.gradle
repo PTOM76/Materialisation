@@ -16,6 +16,7 @@ repositories {
     maven { url "https://maven.shedaniel.me/" }
     maven { url "https://maven.terraformersmc.com/releases" }
     maven { url "https://storage.googleapis.com/devan-maven/" }
+    maven { url "https://ueaj.dev/maven"}
     mavenLocal()
 }
 
