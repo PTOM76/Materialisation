@@ -128,6 +128,7 @@ public class MaterialisationClient implements ClientModInitializer {
             }
         );
 
+        /*
         ModelLoadingPlugin.register(context -> {
             context.modifyModelBeforeBake().register((model, context1) -> {
                 for (Identifier identifier : identifiers) {
@@ -154,6 +155,8 @@ public class MaterialisationClient implements ClientModInitializer {
                 return null;
             });
         });
+
+         */
     }
     
     public static class DynamicToolBakedModel implements BakedModel, FabricBakedModel {
@@ -279,7 +282,7 @@ public class MaterialisationClient implements ClientModInitializer {
 
         @Override
         public Sprite getParticleSprite() {
-            return null;
+            return MinecraftClient.getInstance().getBakedModelManager().getMissingModel().getParticleSprite();
         }
         
         private static final Lazy<ModelTransformation> ITEM_HANDHELD = new Lazy<>(() -> {
