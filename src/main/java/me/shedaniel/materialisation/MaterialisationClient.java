@@ -97,6 +97,20 @@ public class MaterialisationClient implements ClientModInitializer {
             modelIdentifiers.add(brightHeadIdentifier);
         }
 
+        RRPCallback.BEFORE_VANILLA.register(a -> {
+                    RuntimeResourcePack pack = RuntimeResourcePack.create(ModReference.MOD_ID + ":" + ModReference.MOD_ID);
+                    PartMaterials.getKnownMaterials().forEach(partMaterial -> {
+                        for (Identifier value : partMaterial.getTexturedHeadIdentifiers().values()) {
+                            pack.addModel(JModel.model("item/generated").textures(new JTextures().layer0(value.getNamespace() + ":item/" + value.getPath())), Identifier.of(value.getNamespace() + ":item/" + value.getPath()));
+                        }
+                        for (Identifier value : partMaterial.getTexturedHandleIdentifiers().values()) {
+                            pack.addModel(JModel.model("item/generated").textures(new JTextures().layer0(value.getNamespace() + ":item/" + value.getPath())), Identifier.of(value.getNamespace() + ":item/" + value.getPath()));
+                        }
+                    });
+                    a.add(pack);
+                }
+        );
+
         ModelLoadingPlugin.register(pluginContext -> {
             pluginContext.addModels(modelIdentifiers);
 
@@ -115,6 +129,8 @@ public class MaterialisationClient implements ClientModInitializer {
             });
 
             for (Identifier identifier : identifiers) {
+                Identifier resourceLocation = Identifier.of(identifier.getNamespace(), "item/" + identifier.getPath());
+
                 UnbakedModel unbakedModel = new UnbakedModel() {
                     @Override
                     public Collection<Identifier> getModelDependencies() {
@@ -133,9 +149,7 @@ public class MaterialisationClient implements ClientModInitializer {
                 };
 
                 pluginContext.resolveModel().register((context) -> {
-                    if (identifier.getNamespace().equals(context.id().getNamespace()) &&
-                            ("item/" + identifier.getPath()).equals(context.id().getPath())
-                    ) {
+                    if (resourceLocation.equals(context.id())) {
                         return unbakedModel;
                     }
 
@@ -145,20 +159,6 @@ public class MaterialisationClient implements ClientModInitializer {
             }
 
         });
-
-        RRPCallback.BEFORE_VANILLA.register(a -> {
-                    RuntimeResourcePack pack = RuntimeResourcePack.create(ModReference.MOD_ID + ":" + ModReference.MOD_ID);
-                    PartMaterials.getKnownMaterials().forEach(partMaterial -> {
-                        for (Identifier value : partMaterial.getTexturedHeadIdentifiers().values()) {
-                            pack.addModel(JModel.model("item/generated").textures(new JTextures().layer0(value.getNamespace() + ":item/" + value.getPath())), Identifier.of(value.getNamespace() + ":item/" + value.getPath()));
-                        }
-                        for (Identifier value : partMaterial.getTexturedHandleIdentifiers().values()) {
-                            pack.addModel(JModel.model("item/generated").textures(new JTextures().layer0(value.getNamespace() + ":item/" + value.getPath())), Identifier.of(value.getNamespace() + ":item/" + value.getPath()));
-                        }
-                    });
-                    a.add(pack);
-                }
-        );
     }
     
     public static class DynamicToolBakedModel implements BakedModel, FabricBakedModel {
