@@ -5,6 +5,7 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Lifecycle;
+import me.shedaniel.materialisation.ModReference;
 import net.minecraft.registry.*;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.entry.RegistryEntryInfo;
@@ -39,6 +40,8 @@ public class ResettableSimpleRegistry<T> implements MutableRegistry<T> {
     public ResettableSimpleRegistry(String id) {
         super();
         this.id = id;
+        this.registryKey = RegistryKey.ofRegistry(Identifier.of(ModReference.MOD_ID, id));
+        this.lifecycle = Lifecycle.stable();
     }
 
     @SuppressWarnings("unused")
@@ -61,10 +64,11 @@ public class ResettableSimpleRegistry<T> implements MutableRegistry<T> {
 
     @Override
     public RegistryEntry.Reference<T> add(RegistryKey<T> key, T entry, RegistryEntryInfo info) {
-        int rawId = this.getRawId(entry);
-        this.indexedEntries.put(entry, rawId);
         Validate.notNull(key);
         Validate.notNull(entry);
+        int rawId = nextId;
+        this.indexedEntries.put(entry, rawId);
+
         this.randomEntries = null;
         if (this.entriesByKey.containsKey(key)) {
             LOGGER.debug("Adding duplicate key '{}' to registry", key);
@@ -76,12 +80,12 @@ public class ResettableSimpleRegistry<T> implements MutableRegistry<T> {
             this.nextId = rawId + 1;
         }
 
-        return RegistryEntry.Reference.standAlone(null, key);
+        return RegistryEntry.Reference.standAlone(this.getEntryOwner(), key);
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return this.entries.isEmpty();
     }
 
     @Nullable
@@ -171,7 +175,7 @@ public class ResettableSimpleRegistry<T> implements MutableRegistry<T> {
         if (this.randomEntries == null) {
             Collection<T> collection = this.entries.values();
             if (collection.isEmpty()) {
-                return null;
+                return Optional.empty();
             }
             
             this.randomEntries = collection.toArray(new Object[0]);

@@ -13,15 +13,12 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.*;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings("CanBeFinal")
 public class MaterialisationMaterialsScreen extends Screen {
-    public static Identifier OPTIONS_BACKGROUND_TEXTURE = Identifier.of("textures/gui/options_background.png");
-    
     Screen parent;
     private Object lastDescription;
     private MaterialisationMaterialListWidget materialList;
@@ -31,19 +28,6 @@ public class MaterialisationMaterialsScreen extends Screen {
     protected MaterialisationMaterialsScreen(Screen parent) {
         super(Text.translatable("config.title.materialisation"));
         this.parent = parent;
-    }
-    
-    public static void overlayBackground(int x1, int y1, int x2, int y2, int red, int green, int blue, int startAlpha, int endAlpha) {
-        Tessellator tessellator = Tessellator.getInstance();
-        MinecraftClient.getInstance().getTextureManager().bindTexture(OPTIONS_BACKGROUND_TEXTURE);
-        int width = MinecraftClient.getInstance().getWindow().getScaledWidth();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        BufferBuilder builder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-        builder.vertex(x1, y2, 0.0F).color(red, green, blue, endAlpha).texture(0, y2 / 32.0F);
-        builder.vertex(x2, y2, 0.0F).color(red, green, blue, endAlpha).texture(width / 32.0F, y2 / 32.0F);
-        builder.vertex(x2, y1, 0.0F).color(red, green, blue, startAlpha).texture(width / 32.0F, y1 / 32.0F);
-        builder.vertex(x1, y1, 0.0F).color(red, green, blue, startAlpha).texture(0, y1 / 32.0F);
-        BufferRenderer.drawWithGlobalProgram(builder.end());
     }
     
     @Override
@@ -67,8 +51,8 @@ public class MaterialisationMaterialsScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        addDrawableChild(materialList = new MaterialisationMaterialListWidget(client, width / 2 - 10, height, 28 + 5, height - 5, OPTIONS_BACKGROUND_TEXTURE));
-        addDrawableChild(descriptionList = new MaterialisationDescriptionListWidget(client, width / 2 - 10, height, 28 + 5, height - 5, OPTIONS_BACKGROUND_TEXTURE));
+        addDrawableChild(materialList = new MaterialisationMaterialListWidget(client, width / 2 - 10, height, 28 + 5, height - 5));
+        addDrawableChild(descriptionList = new MaterialisationDescriptionListWidget(client, width / 2 - 10, height, 28 + 5, height - 5));
         addSelectableChild(installButton = ButtonWidget.builder(Text.translatable("config.button.materialisation.install"), var1 -> {
             assert client != null;
             client.setScreen(new MaterialisationInstallScreen(this));
@@ -163,7 +147,7 @@ public class MaterialisationMaterialsScreen extends Screen {
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ZERO, GlStateManager.DstFactor.ONE);
         Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder builder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+        BufferBuilder builder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
         builder.vertex(0, 28 + 4, 0.0F).color(0, 0, 0, 0).texture(0.0F, 1.0F);
         builder.vertex(this.width, 28 + 4, 0.0F).color(0, 0, 0, 0).texture(1.0F, 1.0F);
         builder.vertex(this.width, 28, 0.0F).color(0, 0, 0, 255).texture(1.0F, 0.0F);

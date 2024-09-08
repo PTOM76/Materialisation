@@ -22,8 +22,8 @@ import java.util.List;
 
 @SuppressWarnings({"CanBeFinal", "unused"})
 public class MaterialisationMaterialListWidget extends DynamicElementListWidget<MaterialisationMaterialListWidget.Entry> {
-    public MaterialisationMaterialListWidget(MinecraftClient client, int width, int height, int top, int bottom, Identifier backgroundLocation) {
-        super(client, width, height, top, bottom, backgroundLocation);
+    public MaterialisationMaterialListWidget(MinecraftClient client, int width, int height, int top, int bottom) {
+        super(client, width, height, top, bottom, Identifier.of("textures/gui/menu_background.png"));
     }
 
     @Override

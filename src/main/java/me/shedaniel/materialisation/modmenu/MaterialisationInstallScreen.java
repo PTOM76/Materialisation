@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static me.shedaniel.materialisation.modmenu.MaterialisationMaterialsScreen.overlayBackground;
-
 @SuppressWarnings("CanBeFinal")
 public class MaterialisationInstallScreen extends Screen {
     public static Identifier OPTIONS_BACKGROUND_TEXTURE = Identifier.of("textures/gui/options_background.png");
@@ -126,7 +124,7 @@ public class MaterialisationInstallScreen extends Screen {
         //renderBackgroundTexture(context);
         super.render(context, mouseX, mouseY, delta);
         listWidget.render(context, mouseX, mouseY, delta);
-        overlayBackground(0, height - 28, width, height, 64, 64, 64, 255, 255);
+        //overlayBackground(0, height - 28, width, height, 64, 64, 64, 255, 255);
         context.drawCenteredTextWithShadow(textRenderer, title, width / 2, 10, 16777215);
         refreshButton.render(context, mouseX, mouseY, delta);
         backButton.render(context, mouseX, mouseY, delta);

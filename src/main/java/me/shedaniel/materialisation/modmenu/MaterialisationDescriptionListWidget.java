@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings({"unused", "CanBeFinal"})
 public class MaterialisationDescriptionListWidget extends DynamicElementListWidget<MaterialisationDescriptionListWidget.Entry> {
-    public MaterialisationDescriptionListWidget(MinecraftClient client, int width, int height, int top, int bottom, Identifier backgroundLocation) {
-        super(client, width, height, top, bottom, backgroundLocation);
+    public MaterialisationDescriptionListWidget(MinecraftClient client, int width, int height, int top, int bottom) {
+        super(client, width, height, top, bottom, Identifier.of("textures/gui/menu_background.png"));
     }
     
     @Override

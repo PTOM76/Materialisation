@@ -14,9 +14,6 @@ import net.minecraft.text.Text;
 import java.util.Locale;
 import java.util.UUID;
 
-import static me.shedaniel.materialisation.modmenu.MaterialisationMaterialsScreen.overlayBackground;
-
-
 @SuppressWarnings("CanBeFinal")
 public class MaterialisationCreateOverrideNameScreen extends Screen {
     private MaterialisationMaterialsScreen og;
@@ -95,12 +92,12 @@ public class MaterialisationCreateOverrideNameScreen extends Screen {
                 continueButton.active = false;
             }
         }
-        overlayBackground(0, 0, width, 28, 64, 64, 64, 255, 255);
-        overlayBackground(0, 28, width, height, 32, 32, 32, 255, 255);
+        //overlayBackground(0, 0, width, 28, 64, 64, 64, 255, 255);
+        //overlayBackground(0, 28, width, height, 32, 32, 32, 255, 255);
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ZERO, GlStateManager.DstFactor.ONE);
         Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder builder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+        BufferBuilder builder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
         builder.vertex(0, 28 + 4, 0.0F).color(0, 0, 0, 0).texture(0.0F, 1.0F);
         builder.vertex(this.width, 28 + 4, 0.0F).color(0, 0, 0, 0).texture(1.0F, 1.0F);
         builder.vertex(this.width, 28, 0.0F).color(0, 0, 0, 255).texture(1.0F, 0.0F);

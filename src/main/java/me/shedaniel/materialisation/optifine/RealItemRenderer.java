@@ -19,7 +19,7 @@ public class RealItemRenderer {
                 RenderSystem.disableDepthTest();
                 RenderSystem.disableBlend();
                 Tessellator string = Tessellator.getInstance();
-                BufferBuilder immediate = string.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+                BufferBuilder immediate = string.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
                 int i = Math.round(13.0F - (maxDurability - durability) * 13.0F / maxDurability);
                 float hue = Math.max(0.0F, durability / maxDurability);
                 int j = MathHelper.hsvToRgb(hue / 3.0F, 1.0F, 1.0F);
