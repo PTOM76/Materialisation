@@ -1,5 +1,5 @@
 plugins {
-    id "fabric-loom" version "1.0-SNAPSHOT"
+    id "fabric-loom" version "1.7-SNAPSHOT"
     id 'maven-publish'
 }
 
@@ -16,7 +16,6 @@ repositories {
     maven { url "https://maven.shedaniel.me/" }
     maven { url "https://maven.terraformersmc.com/releases" }
     maven { url "https://storage.googleapis.com/devan-maven/" }
-    maven { url "https://maven.pkom.ml/" }
     mavenLocal()
 }
 
@@ -38,8 +37,8 @@ dependencies {
     compileOnly("com.google.code.findbugs:jsr305:3.0.2") { transitive = false }
     modImplementation("com.terraformersmc:modmenu:${project.modmenu}")
     modImplementation("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei}")
-    modImplementation("net.devtech:arrp:0.6.5-pre.2")
-    include("net.devtech:arrp:0.6.5-pre.3")
+    modImplementation("net.devtech:arrp:${project.arrp}")
+    include("net.devtech:arrp:${project.arrp}")
 }
 
 processResources {
