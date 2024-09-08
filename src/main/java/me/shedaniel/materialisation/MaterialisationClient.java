@@ -7,6 +7,7 @@ import me.shedaniel.materialisation.api.ToolType;
 import me.shedaniel.materialisation.gui.MaterialPreparerScreen;
 import me.shedaniel.materialisation.gui.MaterialisingTableScreen;
 import me.shedaniel.materialisation.items.MaterialisedMiningTool;
+import me.shedaniel.materialisation.utils.MaterialisationDataUtil;
 import net.devtech.arrp.api.RRPCallback;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.models.JModel;
@@ -14,8 +15,7 @@ import net.devtech.arrp.json.models.JTextures;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
@@ -31,7 +31,6 @@ import net.minecraft.client.render.model.*;
 import net.minecraft.client.render.model.json.JsonUnbakedModel;
 import net.minecraft.client.render.model.json.ModelOverrideList;
 import net.minecraft.client.render.model.json.ModelTransformation;
-import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.util.SpriteIdentifier;
@@ -39,7 +38,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.resource.Resource;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Lazy;
 import net.minecraft.util.math.BlockPos;
@@ -62,9 +60,6 @@ public class MaterialisationClient implements ClientModInitializer {
     public void onInitializeClient() {
         HandledScreens.register(Materialisation.MATERIALISING_TABLE_SCREEN_HANDLER, MaterialisingTableScreen::new);
         HandledScreens.register(Materialisation.MATERIAL_PREPARER_SCREEN_HANDLER, MaterialPreparerScreen::new);
-        ClientPlayNetworking.registerGlobalReceiver(Materialisation.MATERIALISING_TABLE_PLAY_SOUND, (client, handler, buf, responseSender) ->
-                MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.BLOCK_ANVIL_USE, 1, 1))
-        );
         Item[] colorableToolParts = {
                 Materialisation.MEGAAXE_HEAD,
                 Materialisation.HAMMER_HEAD,
@@ -78,7 +73,7 @@ public class MaterialisationClient implements ClientModInitializer {
         ClampedModelPredicateProvider brightProvider = (itemStack, world, livingEntity, seed) -> MaterialisationUtils.isHandleBright(itemStack) ? 1 : 0;
         ColorProviderRegistry.ITEM.register(MaterialisationUtils::getItemLayerColor, colorableToolParts);
         for (Item colorableToolPart : colorableToolParts) {
-            ModelPredicateProviderRegistry.register(colorableToolPart, new Identifier(ModReference.MOD_ID, "bright"), brightProvider);
+            ModelPredicateProviderRegistry.register(colorableToolPart, Identifier.of(ModReference.MOD_ID, "bright"), brightProvider);
         }
         List<Identifier> identifiers = Stream.of(
                 Materialisation.MATERIALISED_MEGAAXE,
@@ -89,71 +84,75 @@ public class MaterialisationClient implements ClientModInitializer {
                 Materialisation.MATERIALISED_HAMMER
         ).map(Registries.ITEM::getId).toList();
         Renderer renderer = RendererAccess.INSTANCE.getRenderer();
-        ModelLoadingRegistry.INSTANCE.registerModelProvider((resourceManager, consumer) -> {
-            for (Identifier identifier : identifiers) {
-                ModelIdentifier handleIdentifier = new ModelIdentifier(new Identifier(identifier.getNamespace(), identifier.getPath() + "_handle"), "inventory");
-                ModelIdentifier headIdentifier = new ModelIdentifier(new Identifier(identifier.getNamespace(), identifier.getPath() + "_head"), "inventory");
-                consumer.accept(handleIdentifier);
-                consumer.accept(headIdentifier);
-                ModelIdentifier brightHandleIdentifier = new ModelIdentifier(new Identifier(identifier.getNamespace(), identifier.getPath() + "_handle_bright"), "inventory");
-                ModelIdentifier brightHeadIdentifier = new ModelIdentifier(new Identifier(identifier.getNamespace(), identifier.getPath() + "_head_bright"), "inventory");
-                consumer.accept(brightHandleIdentifier);
-                consumer.accept(brightHeadIdentifier);
-            }
+
+        List<Identifier> modelIdentifiers = new ArrayList<>();
+        for (Identifier identifier : identifiers) {
+            Identifier handleIdentifier = Identifier.of(identifier.getNamespace(), identifier.getPath() + "_handle");
+            Identifier headIdentifier = Identifier.of(identifier.getNamespace(), identifier.getPath() + "_head");
+            modelIdentifiers.add(handleIdentifier);
+            modelIdentifiers.add(headIdentifier);
+            Identifier brightHandleIdentifier = Identifier.of(identifier.getNamespace(), identifier.getPath() + "_handle_bright");
+            Identifier brightHeadIdentifier = Identifier.of(identifier.getNamespace(), identifier.getPath() + "_head_bright");
+            modelIdentifiers.add(brightHandleIdentifier);
+            modelIdentifiers.add(brightHeadIdentifier);
+        }
+
+        ModelLoadingPlugin.register(context -> {
+            context.addModels(modelIdentifiers);
+
             for (Modifier modifier : Materialisation.MODIFIERS) {
                 for (ToolType toolType : ToolType.values()) {
                     Identifier modelIdentifier = modifier.getModelIdentifier(toolType);
                     if (modelIdentifier != null) {
-                        consumer.accept(new ModelIdentifier(modelIdentifier, "inventory"));
+                        context.addModels(modelIdentifier);
                     }
                 }
             }
             PartMaterials.getKnownMaterials().forEach(partMaterial -> {
-                for (Identifier value : partMaterial.getTexturedHeadIdentifiers().values()) {
-                    consumer.accept(new ModelIdentifier(value, "inventory"));
-                }
-                for (Identifier value : partMaterial.getTexturedHandleIdentifiers().values()) {
-                    consumer.accept(new ModelIdentifier(value, "inventory"));
-                }
+                context.addModels(partMaterial.getTexturedHeadIdentifiers().values());
+                context.addModels(partMaterial.getTexturedHandleIdentifiers().values());
             });
         });
+
         RRPCallback.BEFORE_VANILLA.register(a -> {
-            RuntimeResourcePack pack = RuntimeResourcePack.create(ModReference.MOD_ID + ":" + ModReference.MOD_ID);
-            PartMaterials.getKnownMaterials().forEach(partMaterial -> {
-                for (Identifier value : partMaterial.getTexturedHeadIdentifiers().values()) {
-                    pack.addModel(JModel.model("item/generated").textures(new JTextures().layer0(value.getNamespace() + ":item/" + value.getPath())), new Identifier(value.getNamespace() + ":item/" + value.getPath()));
-                }
-                for (Identifier value : partMaterial.getTexturedHandleIdentifiers().values()) {
-                    pack.addModel(JModel.model("item/generated").textures(new JTextures().layer0(value.getNamespace() + ":item/" + value.getPath())), new Identifier(value.getNamespace() + ":item/" + value.getPath()));
-                }
-            });
-            a.add(pack);
-        });
-        
-        ModelLoadingRegistry.INSTANCE.registerVariantProvider(resourceManager -> (modelIdentifier, modelProviderContext) -> {
-            for (Identifier identifier : identifiers) {
-                if (modelIdentifier.getNamespace().equals(identifier.getNamespace())
-                    && modelIdentifier.getPath().equals(identifier.getPath())) {
-                    return new UnbakedModel() {
-                        @Override
-                        public Collection<Identifier> getModelDependencies() {
-                            return Collections.emptyList();
-                        }
-
-                        @Override
-                        public void setParents(Function<Identifier, UnbakedModel> modelLoader) {
-
-                        }
-
-                        @Nullable
-                        @Override
-                        public BakedModel bake(Baker baker, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings rotationContainer, Identifier modelId) {
-                            return new DynamicToolBakedModel(identifier, Registries.ITEM.get(identifier));
-                        }
-                    };
-                }
+                RuntimeResourcePack pack = RuntimeResourcePack.create(ModReference.MOD_ID + ":" + ModReference.MOD_ID);
+                PartMaterials.getKnownMaterials().forEach(partMaterial -> {
+                    for (Identifier value : partMaterial.getTexturedHeadIdentifiers().values()) {
+                        pack.addModel(JModel.model("item/generated").textures(new JTextures().layer0(value.getNamespace() + ":item/" + value.getPath())), Identifier.of(value.getNamespace() + ":item/" + value.getPath()));
+                    }
+                    for (Identifier value : partMaterial.getTexturedHandleIdentifiers().values()) {
+                        pack.addModel(JModel.model("item/generated").textures(new JTextures().layer0(value.getNamespace() + ":item/" + value.getPath())), Identifier.of(value.getNamespace() + ":item/" + value.getPath()));
+                    }
+                });
+                a.add(pack);
             }
-            return null;
+        );
+
+        ModelLoadingPlugin.register(context -> {
+            context.modifyModelBeforeBake().register((model, context1) -> {
+                for (Identifier identifier : identifiers) {
+                    if (model.getModelDependencies().contains(identifier)) {
+                        return new UnbakedModel() {
+                            @Override
+                            public Collection<Identifier> getModelDependencies() {
+                                return Collections.emptyList();
+                            }
+
+                            @Override
+                            public void setParents(Function<Identifier, UnbakedModel> modelLoader) {
+
+                            }
+
+                            @Nullable
+                            @Override
+                            public BakedModel bake(Baker baker, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings rotationContainer) {
+                                return new DynamicToolBakedModel(identifier, Registries.ITEM.get(identifier));
+                            }
+                        };
+                    }
+                }
+                return null;
+            });
         });
     }
     
@@ -166,10 +165,10 @@ public class MaterialisationClient implements ClientModInitializer {
         private final Map<Modifier, Optional<ModelIdentifier>> modifierModelMap = new HashMap<>();
         
         public DynamicToolBakedModel(Identifier identifier, Item item) {
-            this.handleIdentifier = new ModelIdentifier(new Identifier(identifier.getNamespace(), identifier.getPath() + "_handle"), "inventory");
-            this.headIdentifier = new ModelIdentifier(new Identifier(identifier.getNamespace(), identifier.getPath() + "_head"), "inventory");
-            this.brightHandleIdentifier = new ModelIdentifier(new Identifier(identifier.getNamespace(), identifier.getPath() + "_handle_bright"), "inventory");
-            this.brightHeadIdentifier = new ModelIdentifier(new Identifier(identifier.getNamespace(), identifier.getPath() + "_head_bright"), "inventory");
+            this.handleIdentifier = new ModelIdentifier(Identifier.of(identifier.getNamespace(), identifier.getPath() + "_handle"), "inventory");
+            this.headIdentifier = new ModelIdentifier(Identifier.of(identifier.getNamespace(), identifier.getPath() + "_head"), "inventory");
+            this.brightHandleIdentifier = new ModelIdentifier(Identifier.of(identifier.getNamespace(), identifier.getPath() + "_handle_bright"), "inventory");
+            this.brightHeadIdentifier = new ModelIdentifier(Identifier.of(identifier.getNamespace(), identifier.getPath() + "_head_bright"), "inventory");
             this.tool = (MaterialisedMiningTool) item;
         }
         
@@ -187,8 +186,8 @@ public class MaterialisationClient implements ClientModInitializer {
         public void emitItemQuads(ItemStack stack, Supplier<Random> randomSupplier, RenderContext context) {
             BakedModelManager modelManager = MinecraftClient.getInstance().getBakedModelManager();
             try {
-                PartMaterial handleMaterial = MaterialisationUtils.getMatFromString(stack.getOrCreateNbt().getString("mt_0_material")).orElseGet(() -> PartMaterials.getKnownMaterials().findFirst().get());
-                PartMaterial headMaterial = MaterialisationUtils.getMatFromString(stack.getOrCreateNbt().getString("mt_1_material")).orElseGet(() -> PartMaterials.getKnownMaterials().findFirst().get());
+                PartMaterial handleMaterial = MaterialisationUtils.getMatFromString(MaterialisationDataUtil.getNbt(stack).getString("mt_0_material")).orElseGet(() -> PartMaterials.getKnownMaterials().findFirst().get());
+                PartMaterial headMaterial = MaterialisationUtils.getMatFromString(MaterialisationDataUtil.getNbt(stack).getString("mt_1_material")).orElseGet(() -> PartMaterials.getKnownMaterials().findFirst().get());
                 boolean headBright = headMaterial.isBright();
                 int headColor = headMaterial.getToolColor();
                 Optional<Identifier> texturedHandleIdentifier = handleMaterial.getTexturedHandleIdentifier(tool.getToolType());
@@ -285,7 +284,7 @@ public class MaterialisationClient implements ClientModInitializer {
         
         private static final Lazy<ModelTransformation> ITEM_HANDHELD = new Lazy<>(() -> {
             try {
-                Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(new Identifier("minecraft:models/item/handheld.json")).get();
+                Resource resource = MinecraftClient.getInstance().getResourceManager().getResource(Identifier.of("minecraft:models/item/handheld.json")).get();
                 return JsonUnbakedModel.deserialize(new BufferedReader(new InputStreamReader(resource.getInputStream()))).getTransformations();
             } catch (Throwable throwable) {
                 throw new RuntimeException(throwable);

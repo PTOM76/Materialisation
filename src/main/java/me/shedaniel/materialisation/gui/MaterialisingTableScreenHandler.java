@@ -1,6 +1,5 @@
 package me.shedaniel.materialisation.gui;
 
-import io.netty.buffer.Unpooled;
 import me.shedaniel.materialisation.Materialisation;
 import me.shedaniel.materialisation.MaterialisationUtils;
 import me.shedaniel.materialisation.api.BetterIngredient;
@@ -9,15 +8,17 @@ import me.shedaniel.materialisation.api.ModifierIngredient;
 import me.shedaniel.materialisation.api.PartMaterial;
 import me.shedaniel.materialisation.items.MaterialisedMiningTool;
 import me.shedaniel.materialisation.modifiers.Modifiers;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import me.shedaniel.materialisation.utils.MaterialisationDataUtil;
 import net.minecraft.block.BlockState;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Pair;
 import org.apache.commons.lang3.StringUtils;
@@ -54,9 +55,7 @@ public class MaterialisingTableScreenHandler extends AbstractMaterialisingHandle
                 stack.decrement(nextDecrease);
                 main.setStack(1, stack);
                 if (player instanceof ServerPlayerEntity) {
-                    context.run((world, blockPos) -> {
-                        ServerPlayNetworking.send((ServerPlayerEntity)player, Materialisation.MATERIALISING_TABLE_PLAY_SOUND, new PacketByteBuf(Unpooled.buffer()));
-                    });
+                    player.playSoundToPlayer(SoundEvents.BLOCK_ANVIL_USE, SoundCategory.MASTER, 1.0F, 1.0F);
                 }
             }
         });
@@ -102,8 +101,8 @@ public class MaterialisingTableScreenHandler extends AbstractMaterialisingHandle
         if (first.isEmpty()) {
             this.result.setStack(0, ItemStack.EMPTY);
         } else if (first.getItem() instanceof MaterialisedMiningTool
-            && first.getOrCreateNbt().contains("mt_0_material")
-            && first.getOrCreateNbt().contains("mt_1_material")
+            && MaterialisationDataUtil.getNbt(first).contains("mt_0_material")
+            && MaterialisationDataUtil.getNbt(first).contains("mt_1_material")
         ) {
             // Modifiers
             if (!second.isEmpty()) {
@@ -145,8 +144,8 @@ public class MaterialisingTableScreenHandler extends AbstractMaterialisingHandle
                     return;
                 }
                 PartMaterial material = null;
-                if (copy.getOrCreateNbt().contains("mt_1_material"))
-                    material = MaterialisationUtils.getMaterialFromString(copy.getOrCreateNbt().getString("mt_1_material"));
+                if (MaterialisationDataUtil.getNbt(copy).contains("mt_1_material"))
+                    material = MaterialisationUtils.getMaterialFromString(MaterialisationDataUtil.getNbt(copy).getString("mt_1_material"));
                 if (material == null) {
                     this.result.setStack(0, ItemStack.EMPTY);
                     this.sendContentUpdates();
@@ -161,13 +160,13 @@ public class MaterialisingTableScreenHandler extends AbstractMaterialisingHandle
                 MaterialisationUtils.setToolDurability(copy, Math.min(maxDurability, toolDurability + repairAmount));
             }
             if (StringUtils.isBlank(this.newItemName)) {
-                if (copy.hasCustomName())
-                    copy.removeCustomName();
+                if (copy.contains(DataComponentTypes.CUSTOM_NAME))
+                    copy.remove(DataComponentTypes.CUSTOM_NAME);
             } else if (!this.newItemName.equals(copy.getName().getString()))
                 if (newItemName.equals(copy.getItem().getName(copy).getString()))
-                    copy.removeCustomName();
+                    copy.remove(DataComponentTypes.CUSTOM_NAME);
                 else
-                    copy.setCustomName(Text.literal(this.newItemName));
+                    copy.set(DataComponentTypes.CUSTOM_NAME, Text.literal(this.newItemName));
             nextDecrease = 1;
             this.result.setStack(0, copy);
         } else if ((first.getItem() == Materialisation.PICKAXE_HEAD && second.getItem() == Materialisation.HANDLE) || (first.getItem() == Materialisation.HANDLE && second.getItem() == Materialisation.PICKAXE_HEAD)) {
@@ -184,13 +183,13 @@ public class MaterialisingTableScreenHandler extends AbstractMaterialisingHandle
             } else {
                 ItemStack copy = MaterialisationUtils.createPickaxe(handleMaterial, headMaterial);
                 if (StringUtils.isBlank(this.newItemName)) {
-                    if (copy.hasCustomName())
-                        copy.removeCustomName();
+                    if (copy.contains(DataComponentTypes.CUSTOM_NAME))
+                        copy.remove(DataComponentTypes.CUSTOM_NAME);
                 } else if (!this.newItemName.equals(copy.getName().getString()))
                     if (newItemName.equals(copy.getItem().getName(copy).getString()))
-                        copy.removeCustomName();
+                        copy.remove(DataComponentTypes.CUSTOM_NAME);
                     else
-                        copy.setCustomName(Text.literal(this.newItemName));
+                        copy.set(DataComponentTypes.CUSTOM_NAME, Text.literal(this.newItemName));
                 nextDecrease = 1;
                 this.result.setStack(0, copy);
             }
@@ -208,13 +207,13 @@ public class MaterialisingTableScreenHandler extends AbstractMaterialisingHandle
             } else {
                 ItemStack copy = MaterialisationUtils.createAxe(handleMaterial, headMaterial);
                 if (StringUtils.isBlank(this.newItemName)) {
-                    if (copy.hasCustomName())
-                        copy.removeCustomName();
+                    if (copy.contains(DataComponentTypes.CUSTOM_NAME))
+                        copy.remove(DataComponentTypes.CUSTOM_NAME);
                 } else if (!this.newItemName.equals(copy.getName().getString()))
                     if (newItemName.equals(copy.getItem().getName(copy).getString()))
-                        copy.removeCustomName();
+                        copy.remove(DataComponentTypes.CUSTOM_NAME);
                     else
-                        copy.setCustomName(Text.literal(this.newItemName));
+                        copy.set(DataComponentTypes.CUSTOM_NAME, Text.literal(this.newItemName));
                 nextDecrease = 1;
                 this.result.setStack(0, copy);
             }
@@ -232,13 +231,13 @@ public class MaterialisingTableScreenHandler extends AbstractMaterialisingHandle
             } else {
                 ItemStack copy = MaterialisationUtils.createShovel(handleMaterial, headMaterial);
                 if (StringUtils.isBlank(this.newItemName)) {
-                    if (copy.hasCustomName())
-                        copy.removeCustomName();
+                    if (copy.contains(DataComponentTypes.CUSTOM_NAME))
+                        copy.remove(DataComponentTypes.CUSTOM_NAME);
                 } else if (!this.newItemName.equals(copy.getName().getString()))
                     if (newItemName.equals(copy.getItem().getName(copy).getString()))
-                        copy.removeCustomName();
+                        copy.remove(DataComponentTypes.CUSTOM_NAME);
                     else
-                        copy.setCustomName(Text.literal(this.newItemName));
+                        copy.set(DataComponentTypes.CUSTOM_NAME, Text.literal(this.newItemName));
                 nextDecrease = 1;
                 this.result.setStack(0, copy);
             }
@@ -256,13 +255,13 @@ public class MaterialisingTableScreenHandler extends AbstractMaterialisingHandle
             } else {
                 ItemStack copy = MaterialisationUtils.createSword(handleMaterial, headMaterial);
                 if (StringUtils.isBlank(this.newItemName)) {
-                    if (copy.hasCustomName())
-                        copy.removeCustomName();
+                    if (copy.contains(DataComponentTypes.CUSTOM_NAME))
+                        copy.remove(DataComponentTypes.CUSTOM_NAME);
                 } else if (!this.newItemName.equals(copy.getName().getString()))
                     if (newItemName.equals(copy.getItem().getName(copy).getString()))
-                        copy.removeCustomName();
+                        copy.remove(DataComponentTypes.CUSTOM_NAME);
                     else
-                        copy.setCustomName(Text.literal(this.newItemName));
+                        copy.set(DataComponentTypes.CUSTOM_NAME, Text.literal(this.newItemName));
                 nextDecrease = 1;
                 this.result.setStack(0, copy);
             }
@@ -280,13 +279,13 @@ public class MaterialisingTableScreenHandler extends AbstractMaterialisingHandle
             } else {
                 ItemStack copy = MaterialisationUtils.createMegaAxe(handleMaterial, headMaterial);
                 if (StringUtils.isBlank(this.newItemName)) {
-                    if (copy.hasCustomName())
-                        copy.removeCustomName();
+                    if (copy.contains(DataComponentTypes.CUSTOM_NAME))
+                        copy.remove(DataComponentTypes.CUSTOM_NAME);
                 } else if (!this.newItemName.equals(copy.getName().getString()))
                     if (newItemName.equals(copy.getItem().getName(copy).getString()))
-                        copy.removeCustomName();
+                        copy.remove(DataComponentTypes.CUSTOM_NAME);
                     else
-                        copy.setCustomName(Text.literal(this.newItemName));
+                        copy.set(DataComponentTypes.CUSTOM_NAME, Text.literal(this.newItemName));
                 nextDecrease = 1;
                 this.result.setStack(0, copy);
             }
@@ -304,13 +303,13 @@ public class MaterialisingTableScreenHandler extends AbstractMaterialisingHandle
             } else {
                 ItemStack copy = MaterialisationUtils.createHammer(handleMaterial, headMaterial);
                 if (StringUtils.isBlank(this.newItemName)) {
-                    if (copy.hasCustomName())
-                        copy.removeCustomName();
+                    if (copy.contains(DataComponentTypes.CUSTOM_NAME))
+                        copy.remove(DataComponentTypes.CUSTOM_NAME);
                 } else if (!this.newItemName.equals(copy.getName().getString()))
                     if (newItemName.equals(copy.getItem().getName(copy).getString()))
-                        copy.removeCustomName();
+                        copy.remove(DataComponentTypes.CUSTOM_NAME);
                     else
-                        copy.setCustomName(Text.literal(this.newItemName));
+                        copy.set(DataComponentTypes.CUSTOM_NAME, Text.literal(this.newItemName));
                 nextDecrease = 1;
                 this.result.setStack(0, copy);
             }
@@ -362,9 +361,9 @@ public class MaterialisingTableScreenHandler extends AbstractMaterialisingHandle
         if (this.getSlot(2).hasStack()) {
             ItemStack itemStack = this.getSlot(2).getStack();
             if (StringUtils.isBlank(string)) {
-                itemStack.removeCustomName();
+                itemStack.remove(DataComponentTypes.CUSTOM_NAME);
             } else {
-                itemStack.setCustomName(Text.literal(this.newItemName));
+                itemStack.set(DataComponentTypes.CUSTOM_NAME, Text.literal(this.newItemName));
             }
         }
         this.updateResult();

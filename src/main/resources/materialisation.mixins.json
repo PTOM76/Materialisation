@@ -3,8 +3,14 @@
   "required": true,
   "package": "me.shedaniel.materialisation.mixin",
   "compatibilityLevel": "JAVA_8",
-  "mixins": ["MixinBlock", "MixinEnchantmentHelper", "MixinItemStack"],
-  "client": ["MixinWorldRenderer"],
+  "mixins": [
+    "MixinBlock",
+    "MixinEnchantmentHelper",
+    "MixinItemStack"
+  ],
+  "client": [
+    "MixinWorldRenderer"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

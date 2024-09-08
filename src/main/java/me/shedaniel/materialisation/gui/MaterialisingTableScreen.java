@@ -1,9 +1,8 @@
 package me.shedaniel.materialisation.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import io.netty.buffer.Unpooled;
-import me.shedaniel.materialisation.Materialisation;
 import me.shedaniel.materialisation.ModReference;
+import me.shedaniel.materialisation.network.RenamePayload;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -11,9 +10,9 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
@@ -23,7 +22,7 @@ import org.lwjgl.glfw.GLFW;
 @SuppressWarnings("ConstantConditions")
 @Environment(EnvType.CLIENT)
 public class MaterialisingTableScreen extends MaterialisingScreenBase<MaterialisingTableScreenHandler> {
-    private static final Identifier TEXTURE = new Identifier(ModReference.MOD_ID, "textures/gui/container/materialising_table.png");
+    private static final Identifier TEXTURE = Identifier.of(ModReference.MOD_ID, "textures/gui/container/materialising_table.png");
     private TextFieldWidget nameField;
     
     public MaterialisingTableScreen(MaterialisingTableScreenHandler container, PlayerInventory inventory, Text title) {
@@ -74,14 +73,12 @@ public class MaterialisingTableScreen extends MaterialisingScreenBase<Materialis
         if (!name.isEmpty()) {
             String string = name;
             Slot slot_1 = this.handler.getSlot(2);
-            if (slot_1 != null && slot_1.hasStack() && !slot_1.getStack().hasCustomName() && name.equals(slot_1.getStack().getName().getString())) {
+            if (slot_1 != null && slot_1.hasStack() && !slot_1.getStack().contains(DataComponentTypes.CUSTOM_NAME) && name.equals(slot_1.getStack().getName().getString())) {
                 string = "";
             }
             
             this.handler.setNewItemName(string);
-            PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-            buf.writeString(string);
-            ClientPlayNetworking.send(Materialisation.MATERIALISING_TABLE_RENAME, buf);
+            ClientPlayNetworking.send(new RenamePayload(string));
         }
     }
     

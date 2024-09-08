@@ -41,7 +41,7 @@ public class MaterialisingScreenBase<T extends AbstractMaterialisingHandlerBase>
     
     @Override
     public void render(DrawContext content, int mouseX, int mouseY, float delta) {
-        this.renderBackground(content);
+        this.renderBackground(content, mouseX, mouseY, delta);
         super.render(content, mouseX, mouseY, delta);
         RenderSystem.disableBlend();
         this.drawMouseoverTooltip(content, mouseX, mouseY);

@@ -7,10 +7,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.render.*;
 import net.minecraft.client.util.NarratorManager;
 import net.minecraft.text.Text;
 
@@ -62,17 +59,17 @@ public class MaterialisationCreateOverrideNameScreen extends Screen {
         assert client != null;
         addSelectableChild(fileName = new TextFieldWidget(client.textRenderer, width / 4, 50, width / 2, 18, fileName, NarratorManager.EMPTY) {
             @Override
-            public void render(DrawContext context, int int_1, int int_2, float float_1) {
+            public void renderWidget(DrawContext context, int int_1, int int_2, float float_1) {
                 if (getText().isEmpty())
                     setSuggestion(randomFileName);
                 else setSuggestion(null);
                 setEditableColor(!getText().isEmpty() && !getText().toLowerCase(Locale.ROOT).endsWith(".json") ? 16733525 : 14737632);
-                super.render(context, int_1, int_2, float_1);
+                super.renderWidget(context, int_1, int_2, float_1);
             }
         });
         addSelectableChild(priority = new TextFieldWidget(client.textRenderer, width / 4, 118, width / 2, 18, priority, NarratorManager.EMPTY) {
             @Override
-            public void render(DrawContext context, int int_1, int int_2, float float_1) {
+            public void renderWidget(DrawContext context, int int_1, int int_2, float float_1) {
                 if (getText().isEmpty())
                     setSuggestion("0");
                 else setSuggestion(null);
@@ -83,7 +80,7 @@ public class MaterialisationCreateOverrideNameScreen extends Screen {
                     } catch (NumberFormatException e) {
                         setEditableColor(16733525);
                     }
-                super.render(context, int_1, int_2, float_1);
+                super.renderWidget(context, int_1, int_2, float_1);
             }
         });
     }
@@ -103,13 +100,12 @@ public class MaterialisationCreateOverrideNameScreen extends Screen {
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ZERO, GlStateManager.DstFactor.ONE);
         Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE);
-        buffer.vertex(0, 28 + 4, 0.0D).color(0, 0, 0, 0).texture(0.0F, 1.0F).next();
-        buffer.vertex(this.width, 28 + 4, 0.0D).color(0, 0, 0, 0).texture(1.0F, 1.0F).next();
-        buffer.vertex(this.width, 28, 0.0D).color(0, 0, 0, 255).texture(1.0F, 0.0F).next();
-        buffer.vertex(0, 28, 0.0D).color(0, 0, 0, 255).texture(0.0F, 0.0F).next();
-        tessellator.draw();
+        BufferBuilder builder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+        builder.vertex(0, 28 + 4, 0.0F).color(0, 0, 0, 0).texture(0.0F, 1.0F);
+        builder.vertex(this.width, 28 + 4, 0.0F).color(0, 0, 0, 0).texture(1.0F, 1.0F);
+        builder.vertex(this.width, 28, 0.0F).color(0, 0, 0, 255).texture(1.0F, 0.0F);
+        builder.vertex(0, 28, 0.0F).color(0, 0, 0, 255).texture(0.0F, 0.0F);
+        BufferRenderer.drawWithGlobalProgram(builder.end());
         RenderSystem.disableBlend();
         context.drawCenteredTextWithShadow(textRenderer, title, width / 2, 10, 16777215);
         context.drawTextWithShadow(textRenderer, Text.translatable("config.text.materialisation.override_json_file_name"), width / 4, 36, -6250336);

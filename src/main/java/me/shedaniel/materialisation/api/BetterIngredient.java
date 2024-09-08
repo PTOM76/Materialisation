@@ -25,8 +25,8 @@ public class BetterIngredient {
     @SuppressWarnings("CanBeFinal")
     private transient Lazy<ItemStack[]> stacks = new Lazy<>(() -> {
         if (type == Type.ITEM)
-            return new ItemStack[]{new ItemStack(Registries.ITEM.get(new Identifier(content)), count)};
-        TagKey<Item> tag = TagKey.of(RegistryKeys.ITEM, new Identifier(content));
+            return new ItemStack[]{new ItemStack(Registries.ITEM.get(Identifier.of(content)), count)};
+        TagKey<Item> tag = TagKey.of(RegistryKeys.ITEM, Identifier.of(content));
         List<ItemStack> itemStacks = new ArrayList<>();
         if (tag != null) {
             try {

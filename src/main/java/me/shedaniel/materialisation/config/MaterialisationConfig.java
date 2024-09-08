@@ -160,7 +160,7 @@ public class MaterialisationConfig {
         public Identifier getIdentifier() {
             if (identifierCache != null)
                 return identifierCache;
-            return identifierCache = new Identifier(name);
+            return identifierCache = Identifier.of(name);
         }
         
         @Override

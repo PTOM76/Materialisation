@@ -236,12 +236,12 @@ public class ConfigHelper implements ModifierIngredientsHandler {
                 overrides.sort(Comparator.comparingDouble(value -> value.has("priority") ? value.get("priority").getAsDouble() : 0d));
                 for (JsonObject override : overrides)
                     try {
-                        Identifier identifier = new Identifier(override.get("name").getAsString());
+                        Identifier identifier = Identifier.of(override.get("name").getAsString());
                         for (Map.Entry<String, JsonElement> entry : override.entrySet())
                             if (!entry.getKey().equalsIgnoreCase("type") && !entry.getKey().equalsIgnoreCase("name") && !entry.getKey().equalsIgnoreCase("priority")) {
                                 ConfigMaterial material = null;
                                 for (Pair<ConfigPack, ConfigMaterial> knownMaterial : knownMaterials) {
-                                    if (new Identifier(knownMaterial.getRight().name).equals(identifier)) {
+                                    if (Identifier.of(knownMaterial.getRight().name).equals(identifier)) {
                                         material = knownMaterial.getRight();
                                         break;
                                     }
@@ -267,7 +267,7 @@ public class ConfigHelper implements ModifierIngredientsHandler {
                 Comparator<JsonObject> comparingDouble = Comparator.comparingDouble(value -> value.has("priority") ? value.get("priority").getAsDouble() : 0d);
                 MODIFIERS.sort(comparingDouble.reversed());
                 for (JsonObject modifier : MODIFIERS) {
-                    Identifier identifier = new Identifier(modifier.get("modifier").getAsString());
+                    Identifier identifier = Identifier.of(modifier.get("modifier").getAsString());
                     if (Modifiers.containsIngredientForModifier(identifier))
                         continue;
                     List<ModifierIngredient> ingredients = new ArrayList<>();

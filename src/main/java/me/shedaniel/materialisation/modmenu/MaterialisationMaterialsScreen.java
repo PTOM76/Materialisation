@@ -11,17 +11,16 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.render.*;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings("CanBeFinal")
 public class MaterialisationMaterialsScreen extends Screen {
+    public static Identifier OPTIONS_BACKGROUND_TEXTURE = Identifier.of("textures/gui/options_background.png");
     
     Screen parent;
     private Object lastDescription;
@@ -36,16 +35,15 @@ public class MaterialisationMaterialsScreen extends Screen {
     
     public static void overlayBackground(int x1, int y1, int x2, int y2, int red, int green, int blue, int startAlpha, int endAlpha) {
         Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
         MinecraftClient.getInstance().getTextureManager().bindTexture(OPTIONS_BACKGROUND_TEXTURE);
         int width = MinecraftClient.getInstance().getWindow().getScaledWidth();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE);
-        buffer.vertex(x1, y2, 0.0D).color(red, green, blue, endAlpha).texture(0, y2 / 32.0F).next();
-        buffer.vertex(x2, y2, 0.0D).color(red, green, blue, endAlpha).texture(width / 32.0F, y2 / 32.0F).next();
-        buffer.vertex(x2, y1, 0.0D).color(red, green, blue, startAlpha).texture(width / 32.0F, y1 / 32.0F).next();
-        buffer.vertex(x1, y1, 0.0D).color(red, green, blue, startAlpha).texture(0, y1 / 32.0F).next();
-        tessellator.draw();
+        BufferBuilder builder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+        builder.vertex(x1, y2, 0.0F).color(red, green, blue, endAlpha).texture(0, y2 / 32.0F);
+        builder.vertex(x2, y2, 0.0F).color(red, green, blue, endAlpha).texture(width / 32.0F, y2 / 32.0F);
+        builder.vertex(x2, y1, 0.0F).color(red, green, blue, startAlpha).texture(width / 32.0F, y1 / 32.0F);
+        builder.vertex(x1, y1, 0.0F).color(red, green, blue, startAlpha).texture(0, y1 / 32.0F);
+        BufferRenderer.drawWithGlobalProgram(builder.end());
     }
     
     @Override
@@ -152,7 +150,7 @@ public class MaterialisationMaterialsScreen extends Screen {
     
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackgroundTexture(context);
+        //renderBackgroundTexture(context);
         super.render(context, mouseX, mouseY, delta);
         materialList.render(context, mouseX, mouseY, delta);
         descriptionList.render(context, mouseX, mouseY, delta);
@@ -165,13 +163,12 @@ public class MaterialisationMaterialsScreen extends Screen {
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ZERO, GlStateManager.DstFactor.ONE);
         Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE);
-        buffer.vertex(0, 28 + 4, 0.0D).color(0, 0, 0, 0).texture(0.0F, 1.0F).next();
-        buffer.vertex(this.width, 28 + 4, 0.0D).color(0, 0, 0, 0).texture(1.0F, 1.0F).next();
-        buffer.vertex(this.width, 28, 0.0D).color(0, 0, 0, 255).texture(1.0F, 0.0F).next();
-        buffer.vertex(0, 28, 0.0D).color(0, 0, 0, 255).texture(0.0F, 0.0F).next();
-        tessellator.draw();;
+        BufferBuilder builder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+        builder.vertex(0, 28 + 4, 0.0F).color(0, 0, 0, 0).texture(0.0F, 1.0F);
+        builder.vertex(this.width, 28 + 4, 0.0F).color(0, 0, 0, 0).texture(1.0F, 1.0F);
+        builder.vertex(this.width, 28, 0.0F).color(0, 0, 0, 255).texture(1.0F, 0.0F);
+        builder.vertex(0, 28, 0.0F).color(0, 0, 0, 255).texture(0.0F, 0.0F);
+        BufferRenderer.drawWithGlobalProgram(builder.end());
         RenderSystem.disableBlend();
 
         context.drawCenteredTextWithShadow(textRenderer, title, width / 2, 10, 16777215);

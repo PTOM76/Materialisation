@@ -7,7 +7,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.RecipeType;
+import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.SmeltingRecipe;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -29,7 +29,14 @@ public abstract class MixinBlock {
         if (stack.getItem() instanceof MaterialisedMiningTool) {
             int autoSmeltLevel = ((MaterialisedMiningTool) stack.getItem()).getModifierLevel(stack, DefaultModifiers.AUTO_SMELT);
             if (autoSmeltLevel > 0) {
-                Collection<SmeltingRecipe> recipes = world.getRecipeManager().getAllOfType(RecipeType.SMELTING).values();
+                List<SmeltingRecipe> recipes = new ArrayList<>();
+                Collection<RecipeEntry<?>> recipeEntries = world.getRecipeManager().values();
+                for (RecipeEntry<?> recipeEntry : recipeEntries) {
+                    if (recipeEntry.value() instanceof SmeltingRecipe) {
+                        recipes.add((SmeltingRecipe) recipeEntry.value());
+                    }
+                }
+
                 List<ItemStack> outputStacks = new ArrayList<>(cir.getReturnValue());
                 List<ItemStack> stacks = cir.getReturnValue();
                 for (int i = 0; i < stacks.size(); i++) {
@@ -38,7 +45,7 @@ public abstract class MixinBlock {
                             recipe -> recipe.getIngredients().get(0).test(itemStack)
                     ).findFirst();
                     int finalI = i;
-                    first.ifPresent(recipe -> outputStacks.set(finalI, recipe.getOutput(world.getRegistryManager()).copy()));
+                    first.ifPresent(recipe -> outputStacks.set(finalI, recipe.getResult(world.getRegistryManager()).copy()));
                 }
                 cir.setReturnValue(outputStacks);
             }

@@ -47,12 +47,12 @@ public class GeneratedMaterial implements PartMaterial {
     }
     
     public GeneratedMaterial headTex(ToolType toolType, String s) {
-        texturedHeadIdentifiers.put(toolType, new Identifier(s));
+        texturedHeadIdentifiers.put(toolType, Identifier.of(s));
         return this;
     }
     
     public GeneratedMaterial handleTex(ToolType toolType, String s) {
-        texturedHandleIdentifiers.put(toolType, new Identifier(s));
+        texturedHandleIdentifiers.put(toolType, Identifier.of(s));
         return this;
     }
     

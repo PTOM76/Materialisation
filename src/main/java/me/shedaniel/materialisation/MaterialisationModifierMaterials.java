@@ -35,11 +35,11 @@ public class MaterialisationModifierMaterials {
     }
     
     private static void registerBlock(String name, Block block, Item.Settings settings) {
-        Registry.register(Registries.BLOCK, new Identifier(ModReference.MOD_ID, name), block);
+        Registry.register(Registries.BLOCK, Identifier.of(ModReference.MOD_ID, name), block);
         registerItem(name, new BlockItem(block, settings));
     }
     
     private static void registerItem(String name, Item item) {
-        Registry.register(Registries.ITEM, new Identifier(ModReference.MOD_ID, name), item);
+        Registry.register(Registries.ITEM, Identifier.of(ModReference.MOD_ID, name), item);
     }
 }

@@ -10,6 +10,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 
 import java.io.InputStreamReader;
@@ -22,6 +23,8 @@ import static me.shedaniel.materialisation.modmenu.MaterialisationMaterialsScree
 
 @SuppressWarnings("CanBeFinal")
 public class MaterialisationInstallScreen extends Screen {
+    public static Identifier OPTIONS_BACKGROUND_TEXTURE = Identifier.of("textures/gui/options_background.png");
+
     public static final List<OnlinePack> ONLINE_PACKS = Lists.newArrayList();
     public static boolean loaded = false;
     public static ExecutorService executorService = Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "Materialisation"));
@@ -120,7 +123,7 @@ public class MaterialisationInstallScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackgroundTexture(context);
+        //renderBackgroundTexture(context);
         super.render(context, mouseX, mouseY, delta);
         listWidget.render(context, mouseX, mouseY, delta);
         overlayBackground(0, height - 28, width, height, 64, 64, 64, 255, 255);

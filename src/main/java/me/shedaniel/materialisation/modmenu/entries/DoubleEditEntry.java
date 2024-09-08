@@ -31,9 +31,9 @@ public class DoubleEditEntry extends MaterialisationCreateOverrideListWidget.Edi
         this.defaultValue = defaultValue;
         this.buttonWidget = new TextFieldWidget(MinecraftClient.getInstance().textRenderer, 0, 0, 150, 16, NarratorManager.EMPTY) {
             @Override
-            public void render(DrawContext context, int int_1, int int_2, float float_1) {
+            public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
                 setEditableColor(isValid() ? 0xe0e0e0 : 0xff5555);
-                super.render(context, int_1, int_2, float_1);
+                super.renderWidget(context, mouseX, mouseY, delta);
             }
         };
         buttonWidget.setMaxLength(1000);

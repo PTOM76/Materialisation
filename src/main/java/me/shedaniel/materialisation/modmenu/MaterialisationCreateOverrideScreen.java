@@ -10,6 +10,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 import java.util.List;
 import java.util.Locale;
@@ -17,6 +18,8 @@ import java.util.regex.Pattern;
 
 @SuppressWarnings("CanBeFinal")
 public class MaterialisationCreateOverrideScreen extends Screen {
+    public static Identifier OPTIONS_BACKGROUND_TEXTURE = Identifier.of("textures/gui/options_background.png");
+
     public static final Pattern HEX_COLOR = Pattern.compile("^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$");
     private MaterialisationMaterialsScreen og;
     private Screen parent;

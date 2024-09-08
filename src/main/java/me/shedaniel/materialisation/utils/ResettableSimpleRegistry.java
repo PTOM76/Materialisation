@@ -7,6 +7,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.registry.*;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.entry.RegistryEntryInfo;
 import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.registry.entry.RegistryEntryOwner;
 import net.minecraft.registry.tag.TagKey;
@@ -56,8 +57,11 @@ public class ResettableSimpleRegistry<T> implements MutableRegistry<T> {
         nextId = 0;
     }
 
+
+
     @Override
-    public RegistryEntry<T> set(int rawId, RegistryKey<T> key, T entry, Lifecycle lifecycle) {
+    public RegistryEntry.Reference<T> add(RegistryKey<T> key, T entry, RegistryEntryInfo info) {
+        int rawId = this.getRawId(entry);
         this.indexedEntries.put(entry, rawId);
         Validate.notNull(key);
         Validate.notNull(entry);
@@ -72,12 +76,7 @@ public class ResettableSimpleRegistry<T> implements MutableRegistry<T> {
             this.nextId = rawId + 1;
         }
 
-        return RegistryEntry.of(entry);
-    }
-
-    @Override
-    public RegistryEntry.Reference<T> add(RegistryKey<T> key, T entry, Lifecycle lifecycle) {
-        return (RegistryEntry.Reference<T>) this.set(this.nextId, key, entry, lifecycle);
+        return RegistryEntry.Reference.standAlone(null, key);
     }
 
     @Override
@@ -134,8 +133,8 @@ public class ResettableSimpleRegistry<T> implements MutableRegistry<T> {
     }
 
     @Override
-    public Lifecycle getEntryLifecycle(T entry) {
-        return null;
+    public Optional<RegistryEntryInfo> getEntryInfo(RegistryKey<T> key) {
+        return Optional.empty();
     }
 
     @Override
@@ -146,7 +145,12 @@ public class ResettableSimpleRegistry<T> implements MutableRegistry<T> {
     public Optional<T> getOrEmpty(@Nullable Identifier id) {
         return Optional.ofNullable(this.entries.get(id));
     }
-    
+
+    @Override
+    public Optional<RegistryEntry.Reference<T>> getDefaultEntry() {
+        return Optional.empty();
+    }
+
     public Set<Identifier> getIds() {
         return Collections.unmodifiableSet(this.entries.keySet());
     }
@@ -198,6 +202,11 @@ public class ResettableSimpleRegistry<T> implements MutableRegistry<T> {
 
     @Override
     public Optional<RegistryEntry.Reference<T>> getEntry(int rawId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<RegistryEntry.Reference<T>> getEntry(Identifier id) {
         return Optional.empty();
     }
 

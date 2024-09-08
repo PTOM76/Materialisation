@@ -27,14 +27,14 @@ public class IntEditEntry extends MaterialisationCreateOverrideListWidget.EditEn
         this.defaultValue = defaultValue;
         this.buttonWidget = new TextFieldWidget(MinecraftClient.getInstance().textRenderer, 0, 0, 150, 16, NarratorManager.EMPTY) {
             @Override
-            public void render(DrawContext context, int int_1, int int_2, float float_1) {
+            public void renderWidget(DrawContext context, int int_1, int int_2, float float_1) {
                 try {
                     int i = Integer.parseInt(getText());
                     setEditableColor(14737632);
                 } catch (NumberFormatException ex) {
                     setEditableColor(16733525);
                 }
-                super.render(context, int_1, int_2, float_1);
+                super.renderWidget(context, int_1, int_2, float_1);
             }
         };
         buttonWidget.setMaxLength(1000);

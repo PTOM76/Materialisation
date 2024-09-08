@@ -6,21 +6,26 @@ import me.shedaniel.materialisation.config.ConfigHelper;
 import me.shedaniel.materialisation.items.ColoredItem;
 import me.shedaniel.materialisation.items.MaterialisedMiningTool;
 import me.shedaniel.materialisation.modifiers.DefaultModifiers;
+import me.shedaniel.materialisation.utils.MaterialisationDataUtil;
 import me.shedaniel.materialisation.utils.RomanNumber;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.item.TooltipContext;
+import net.minecraft.block.Block;
 import net.minecraft.client.resource.language.I18n;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -46,8 +51,8 @@ public class MaterialisationUtils {
     }
 
     @Override
-    public int getMiningLevel() {
-      return 0;
+    public TagKey<Block> getInverseTag() {
+      return BlockTags.INCORRECT_FOR_WOODEN_TOOL;
     }
 
     @Override
@@ -85,7 +90,7 @@ public class MaterialisationUtils {
 
   public static int getToolEnchantability(ItemStack stack, boolean modifiers) {
     int enchantability = 0;
-    NbtCompound tag = stack.getOrCreateNbt();
+    NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
     if (tag.contains("mt_0_material") && tag.contains("mt_1_material")) {
       PartMaterial handle = MaterialisationUtils.getMaterialFromString(tag.getString("mt_0_material"));
       PartMaterial head = MaterialisationUtils.getMaterialFromString(tag.getString("mt_1_material"));
@@ -147,8 +152,8 @@ public class MaterialisationUtils {
 
   public static float getBaseToolBreakingSpeed(ItemStack stack) {
     float speed = 0;
-    if (stack.hasNbt()) {
-      NbtCompound tag = stack.getNbt();
+    if (MaterialisationDataUtil.hasNbt(stack)) {
+      NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
       if (tag.contains("mt_0_material") && tag.contains("mt_1_material")) {
         speed = getMatFromString(tag.getString("mt_0_material")).map(PartMaterial::getBreakingSpeedMultiplier).orElse(0d).floatValue() * getMatFromString(tag.getString("mt_1_material")).map(PartMaterial::getToolSpeed).orElse(0d).floatValue();
       }
@@ -168,8 +173,8 @@ public class MaterialisationUtils {
 
   public static int getToolMiningLevel(ItemStack stack, boolean modifiers) {
     int miningLevel = 0;
-    if (stack.hasNbt()) {
-      NbtCompound tag = stack.getNbt();
+    if (MaterialisationDataUtil.hasNbt(stack)) {
+      NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
       if (tag.contains("mt_1_material")) {
         miningLevel = getMatFromString(tag.getString("mt_1_material")).map(PartMaterial::getMiningLevel).orElse(0);
       }
@@ -198,10 +203,10 @@ public class MaterialisationUtils {
   }
 
   public static int getToolDurability(ItemStack stack) {
-    if (!stack.hasNbt()) {
+    if (!MaterialisationDataUtil.hasNbt(stack)) {
       return 1;
     }
-    NbtCompound tag = stack.getNbt();
+    NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
     if (tag.contains("mt_durability")) {
       return Math.min(tag.getInt("mt_durability"), getToolMaxDurability(stack));
     }
@@ -213,10 +218,10 @@ public class MaterialisationUtils {
   }
 
   public static int getToolMaxDurability(ItemStack stack, boolean modifiers) {
-    if (!stack.hasNbt()) {
+    if (!MaterialisationDataUtil.hasNbt(stack)) {
       return 1;
     }
-    NbtCompound tag = stack.getNbt();
+    NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
     if (tag.contains("mt_0_material") && tag.contains("mt_1_material")) {
       if (tag.contains("mt_0_material") && tag.contains("mt_1_material")) {
         double multiplier = getMatFromString(tag.getString("mt_0_material"))
@@ -241,16 +246,16 @@ public class MaterialisationUtils {
   }
 
   public static Map<Modifier, Integer> getToolModifiers(ItemStack stack) {
-    if (!stack.hasNbt())
+    if (!MaterialisationDataUtil.hasNbt(stack))
       return Collections.emptyMap();
     Map<Modifier, Integer> map = new HashMap<>();
-    NbtCompound tag = stack.getNbt();
+    NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
     assert tag != null;
     if (tag.contains("modifiers")) {
       NbtCompound modifiersTag = tag.getCompound("modifiers");
       if (!modifiersTag.isEmpty()) {
         for (String key : modifiersTag.getKeys()) {
-          Identifier identifier = new Identifier(key);
+          Identifier identifier = Identifier.of(key);
           Optional<Modifier> modifiersOrEmpty = Materialisation.MODIFIERS.getOrEmpty(identifier);
           if (modifiersOrEmpty.isPresent()) {
             int level = modifiersTag.getInt(key);
@@ -268,9 +273,9 @@ public class MaterialisationUtils {
   }
 
   public static float getToolAttackDamage(ItemStack stack, boolean modifiers) {
-    if (!stack.hasNbt())
+    if (!MaterialisationDataUtil.hasNbt(stack))
       return 0;
-    NbtCompound tag = stack.getNbt();
+    NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
     assert tag != null;
     PartMaterial material = tag.contains("mt_1_material") ? getMatFromString(tag.getString("mt_1_material")).orElse(null) : null;
     float attackDamage = material == null ? 0 : (float) material.getAttackDamage() + MaterialisedMiningTool.getExtraDamageFromItem(stack.getItem());
@@ -296,9 +301,9 @@ public class MaterialisationUtils {
   }
 
   public static int getItemLayerColor(ItemStack stack, int layer) {
-    if (!stack.hasNbt())
+    if (!MaterialisationDataUtil.hasNbt(stack))
       return -1;
-    NbtCompound tag = stack.getNbt();
+    NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
     if (layer == 0) {
       assert tag != null;
       if (tag.contains("mt_0_material"))
@@ -313,9 +318,9 @@ public class MaterialisationUtils {
   }
 
   public static void setToolDurability(ItemStack stack, int i) {
-    NbtCompound tag = stack.getOrCreateNbt();
+    NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
     tag.putInt("mt_durability", Math.min(i, getToolMaxDurability(stack)));
-    stack.setNbt(tag);
+    MaterialisationDataUtil.setNbt(stack, tag);
   }
 
   public static boolean applyDamage(ItemStack stack, int toDamage, Random random) {
@@ -341,47 +346,47 @@ public class MaterialisationUtils {
 
   public static ItemStack createToolHandle(PartMaterial material) {
     ItemStack stack = new ItemStack(Materialisation.HANDLE);
-    NbtCompound tag = stack.getOrCreateNbt();
+    NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
     tag.putString("mt_0_material", material.getIdentifier().toString());
-    stack.setNbt(tag);
+    MaterialisationDataUtil.setNbt(stack, tag);
     return stack;
   }
 
   public static ItemStack createAxeHead(PartMaterial material) {
     ItemStack stack = new ItemStack(Materialisation.AXE_HEAD);
-    NbtCompound tag = stack.getOrCreateNbt();
+    NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
     tag.putString("mt_0_material", material.getIdentifier().toString());
-    stack.setNbt(tag);
+    MaterialisationDataUtil.setNbt(stack, tag);
     return stack;
   }
 
   public static ItemStack createPickaxeHead(PartMaterial material) {
     ItemStack stack = new ItemStack(Materialisation.PICKAXE_HEAD);
-    NbtCompound tag = stack.getOrCreateNbt();
+    NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
     tag.putString("mt_0_material", material.getIdentifier().toString());
-    stack.setNbt(tag);
+    MaterialisationDataUtil.setNbt(stack, tag);
     return stack;
   }
 
   public static ItemStack createShovelHead(PartMaterial material) {
     ItemStack stack = new ItemStack(Materialisation.SHOVEL_HEAD);
-    NbtCompound tag = stack.getOrCreateNbt();
+    NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
     tag.putString("mt_0_material", material.getIdentifier().toString());
-    stack.setNbt(tag);
+    MaterialisationDataUtil.setNbt(stack, tag);
     return stack;
   }
 
   public static ItemStack createSwordBlade(PartMaterial material) {
     ItemStack stack = new ItemStack(Materialisation.SWORD_BLADE);
-    NbtCompound tag = stack.getOrCreateNbt();
+    NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
     tag.putString("mt_0_material", material.getIdentifier().toString());
-    stack.setNbt(tag);
+    MaterialisationDataUtil.setNbt(stack, tag);
     return stack;
   }
 
   public static PartMaterial getMaterialFromPart(ItemStack stack) {
-    if (stack.getOrCreateNbt().contains("mt_0_material"))
-      return getMaterialFromString(stack.getOrCreateNbt().getString("mt_0_material"));
+    if (MaterialisationDataUtil.getNbt(stack).contains("mt_0_material"))
+      return getMaterialFromString(MaterialisationDataUtil.getNbt(stack).getString("mt_0_material"));
     else
       return null;
   }
@@ -414,99 +419,99 @@ public class MaterialisationUtils {
   }
 
   public static boolean isHandleBright(ItemStack itemStack) {
-    return MaterialisationUtils.getMatFromString(itemStack.getOrCreateNbt().getString("mt_0_material")).map(PartMaterial::isBright).orElse(false);
+    return MaterialisationUtils.getMatFromString(MaterialisationDataUtil.getNbt(itemStack).getString("mt_0_material")).map(PartMaterial::isBright).orElse(false);
   }
 
   public static boolean isHeadBright(ItemStack itemStack) {
-    return MaterialisationUtils.getMatFromString(itemStack.getOrCreateNbt().getString("mt_1_material")).map(PartMaterial::isBright).orElse(false);
+    return MaterialisationUtils.getMatFromString(MaterialisationDataUtil.getNbt(itemStack).getString("mt_1_material")).map(PartMaterial::isBright).orElse(false);
   }
 
   public static ItemStack createPickaxe(PartMaterial handle, PartMaterial pickaxeHead) {
     ItemStack stack = new ItemStack(Materialisation.MATERIALISED_PICKAXE);
-    NbtCompound tag = stack.getOrCreateNbt();
+    NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
     tag.putBoolean("mt_done_tool", true);
     tag.putString("mt_0_material", handle.getIdentifier().toString());
     tag.putString("mt_1_material", pickaxeHead.getIdentifier().toString());
-    stack.setNbt(tag);
+    MaterialisationDataUtil.setNbt(stack, tag);
     return stack;
   }
 
   public static ItemStack createAxe(PartMaterial handle, PartMaterial axeHead) {
     ItemStack stack = new ItemStack(Materialisation.MATERIALISED_AXE);
-    NbtCompound tag = stack.getOrCreateNbt();
+    NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
     tag.putBoolean("mt_done_tool", true);
     tag.putString("mt_0_material", handle.getIdentifier().toString());
     tag.putString("mt_1_material", axeHead.getIdentifier().toString());
-    stack.setNbt(tag);
+    MaterialisationDataUtil.setNbt(stack, tag);
     return stack;
   }
 
   public static ItemStack createShovel(PartMaterial handle, PartMaterial shovelHead) {
     ItemStack stack = new ItemStack(Materialisation.MATERIALISED_SHOVEL);
-    NbtCompound tag = stack.getOrCreateNbt();
+    NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
     tag.putBoolean("mt_done_tool", true);
     tag.putString("mt_0_material", handle.getIdentifier().toString());
     tag.putString("mt_1_material", shovelHead.getIdentifier().toString());
-    stack.setNbt(tag);
+    MaterialisationDataUtil.setNbt(stack, tag);
     return stack;
   }
 
   public static ItemStack createSword(PartMaterial handle, PartMaterial swordBlade) {
     ItemStack stack = new ItemStack(Materialisation.MATERIALISED_SWORD);
-    NbtCompound tag = stack.getOrCreateNbt();
+    NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
     tag.putBoolean("mt_done_tool", true);
     tag.putString("mt_0_material", handle.getIdentifier().toString());
     tag.putString("mt_1_material", swordBlade.getIdentifier().toString());
-    stack.setNbt(tag);
+    MaterialisationDataUtil.setNbt(stack, tag);
     return stack;
   }
 
   public static ItemStack createHammer(PartMaterial handle, PartMaterial hammerHead) {
     ItemStack stack = new ItemStack(Materialisation.MATERIALISED_HAMMER);
-    NbtCompound tag = stack.getOrCreateNbt();
+    NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
     tag.putBoolean("mt_done_tool", true);
     tag.putString("mt_0_material", handle.getIdentifier().toString());
     tag.putString("mt_1_material", hammerHead.getIdentifier().toString());
-    stack.setNbt(tag);
+    MaterialisationDataUtil.setNbt(stack, tag);
     return stack;
   }
 
   public static ItemStack createMegaAxe(PartMaterial handle, PartMaterial megaAxeHead) {
     ItemStack stack = new ItemStack(Materialisation.MATERIALISED_MEGAAXE);
-    NbtCompound tag = stack.getOrCreateNbt();
+    NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
     tag.putBoolean("mt_done_tool", true);
     tag.putString("mt_0_material", handle.getIdentifier().toString());
     tag.putString("mt_1_material", megaAxeHead.getIdentifier().toString());
-    stack.setNbt(tag);
+    MaterialisationDataUtil.setNbt(stack, tag);
     return stack;
   }
 
   public static ItemStack createMegaAxeHead(PartMaterial material) {
     ItemStack stack = new ItemStack(Materialisation.MEGAAXE_HEAD);
-    NbtCompound tag = stack.getOrCreateNbt();
+    NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
     tag.putString("mt_0_material", material.getIdentifier().toString());
-    stack.setNbt(tag);
+    MaterialisationDataUtil.setNbt(stack, tag);
     return stack;
   }
 
   public static ItemStack createHammerHead(PartMaterial material) {
     ItemStack stack = new ItemStack(Materialisation.HAMMER_HEAD);
-    NbtCompound tag = stack.getOrCreateNbt();
+    NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
     tag.putString("mt_0_material", material.getIdentifier().toString());
-    stack.setNbt(tag);
+    MaterialisationDataUtil.setNbt(stack, tag);
     return stack;
   }
 
-  public static UUID getItemModifierDamage() {
+  public static Identifier getItemModifierDamage() {
     return ColoredItem.getItemModifierDamage();
   }
 
-  public static UUID getItemModifierSwingSpeed() {
+  public static Identifier getItemModifierSwingSpeed() {
     return ColoredItem.getItemModifierSwingSpeed();
   }
 
   @Environment(EnvType.CLIENT)
-  public static void appendToolTooltip(ItemStack stack, MaterialisedMiningTool tool, World world, List<Text> texts, TooltipContext context) {
+  public static void appendToolTooltip(ItemStack stack, MaterialisedMiningTool tool, @Nullable World world, List<Text> texts, Item.TooltipContext context) {
     int toolDurability = getToolDurability(stack);
     int baseMaxDurability = getToolMaxDurability(stack, false);
     int maxDurability = getToolMaxDurability(stack);

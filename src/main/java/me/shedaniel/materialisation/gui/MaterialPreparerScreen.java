@@ -13,7 +13,7 @@ import net.minecraft.util.Identifier;
 @SuppressWarnings("ConstantConditions")
 @Environment(EnvType.CLIENT)
 public class MaterialPreparerScreen extends MaterialisingScreenBase<MaterialPreparerScreenHandler> {
-    private static final Identifier TEXTURE = new Identifier(ModReference.MOD_ID, "textures/gui/container/material_preparer.png");
+    private static final Identifier TEXTURE = Identifier.of(ModReference.MOD_ID, "textures/gui/container/material_preparer.png");
     
     public MaterialPreparerScreen(MaterialPreparerScreenHandler container, PlayerInventory inventory, Text title) {
         super(container, inventory, title, TEXTURE);

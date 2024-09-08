@@ -7,6 +7,7 @@ import me.shedaniel.materialisation.Materialisation;
 import me.shedaniel.materialisation.MaterialisationUtils;
 import me.shedaniel.materialisation.api.Modifier;
 import me.shedaniel.materialisation.api.ToolType;
+import me.shedaniel.materialisation.utils.MaterialisationDataUtil;
 import net.fabricmc.fabric.api.item.v1.FabricItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -60,7 +61,6 @@ public interface MaterialisedMiningTool extends FabricItem {
         return minableBlock;
     }
 
-    @Override
     default boolean isSuitableFor(ItemStack stack, BlockState state) {
         int i = getMiningLevel(stack);
         if (i < 3 && state.isIn(BlockTags.NEEDS_DIAMOND_TOOL)) {
@@ -69,8 +69,8 @@ public interface MaterialisedMiningTool extends FabricItem {
             return false;
         } else {
             TagKey<Block> minableBlock = getEffectiveBlocks();
-            if (minableBlock == null)
-                return FabricItem.super.isSuitableFor(stack, state);
+            if (minableBlock == null && this instanceof Item)
+                return ((Item) this).isCorrectForDrops(stack, state);
             return (i >= 1 || !state.isIn(BlockTags.NEEDS_STONE_TOOL)) && state.isIn(minableBlock);
         }
     }
@@ -127,7 +127,7 @@ public interface MaterialisedMiningTool extends FabricItem {
     }
 
     default int getModifierLevel(ItemStack stack, String modifier) {
-        NbtCompound tag = stack.getNbt();
+        NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
         if (tag != null && tag.contains("modifiers")) {
             NbtCompound modifiers = tag.getCompound("modifiers");
             if (modifiers.contains(modifier))
@@ -137,7 +137,7 @@ public interface MaterialisedMiningTool extends FabricItem {
     }
 
     default void setModifierLevel(ItemStack stack, Identifier modifier, int level) {
-        NbtCompound tag = stack.getOrCreateNbt();
+        NbtCompound tag = MaterialisationDataUtil.getNbt(stack);
         if (!tag.contains("modifiers"))
             tag.put("modifiers", new NbtCompound());
         NbtCompound modifiers = tag.getCompound("modifiers");
@@ -149,7 +149,7 @@ public interface MaterialisedMiningTool extends FabricItem {
         double attackDamage = MaterialisationUtils.getToolDurability(stack) > 0 ? MaterialisationUtils.getToolAttackDamage(stack) : -10000;
         if (attackDamage <= 0) return EMPTY;
         return ImmutableMultimap.of(
-                EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(MaterialisationUtils.getItemModifierDamage(), "Tool modifier", attackDamage, EntityAttributeModifier.Operation.ADDITION)
+                EntityAttributes.GENERIC_ATTACK_DAMAGE.value(), new EntityAttributeModifier(MaterialisationUtils.getItemModifierDamage(), attackDamage, EntityAttributeModifier.Operation.ADD_VALUE)
         );
     }
 

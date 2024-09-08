@@ -39,7 +39,7 @@ public class MaterialisationDownloadingScreen extends Screen {
             newScreen = null;
             return;
         }
-        this.renderBackgroundTexture(context);
+        //this.renderBackgroundTexture(context);
         super.render(context, int_1, int_2, float_1);
         context.drawCenteredTextWithShadow(this.textRenderer, title, this.width / 2, this.height / 2 - 50, 16777215);
         String string_3;

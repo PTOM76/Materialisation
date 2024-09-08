@@ -19,7 +19,7 @@ public class RealItemRenderer {
                 RenderSystem.disableDepthTest();
                 RenderSystem.disableBlend();
                 Tessellator string = Tessellator.getInstance();
-                BufferBuilder immediate = string.getBuffer();
+                BufferBuilder immediate = string.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
                 int i = Math.round(13.0F - (maxDurability - durability) * 13.0F / maxDurability);
                 float hue = Math.max(0.0F, durability / maxDurability);
                 int j = MathHelper.hsvToRgb(hue / 3.0F, 1.0F, 1.0F);
@@ -35,13 +35,12 @@ public class RealItemRenderer {
     }
     
     @SuppressWarnings("SameParameterValue")
-    private static void renderGuiQuad(BufferBuilder buffer, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
+    private static void renderGuiQuad(BufferBuilder builder, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
         RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-        buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-        buffer.vertex((x), y, 0.0).color(red, green, blue, alpha).next();
-        buffer.vertex((x), (y + height), 0.0).color(red, green, blue, alpha).next();
-        buffer.vertex((x + width), (y + height), 0.0).color(red, green, blue, alpha).next();
-        buffer.vertex((x + width), (y), 0.0).color(red, green, blue, alpha).next();
-        BufferRenderer.drawWithGlobalProgram(buffer.end());
+        builder.vertex((x), y, 0.0f).color(red, green, blue, alpha);
+        builder.vertex((x), (y + height), 0.0f).color(red, green, blue, alpha);
+        builder.vertex((x + width), (y + height), 0.0f).color(red, green, blue, alpha);
+        builder.vertex((x + width), (y), 0.0f).color(red, green, blue, alpha);
+        BufferRenderer.drawWithGlobalProgram(builder.end());
     }
 }

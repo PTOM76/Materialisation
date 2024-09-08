@@ -1,7 +1,7 @@
 package me.shedaniel.materialisation.blocks;
 
+import com.mojang.serialization.MapCodec;
 import me.shedaniel.materialisation.gui.MaterialisingTableScreenHandler;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.entity.ai.pathing.NavigationType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,7 +13,6 @@ import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.state.StateManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -32,9 +31,19 @@ public class MaterialisingTableBlock extends HorizontalFacingBlock {
     }
     
     public MaterialisingTableBlock() {
-        super(FabricBlockSettings.create().mapColor(MapColor.WHITE).strength(5.0F, 1200.0F).sounds(BlockSoundGroup.METAL));
+        this(AbstractBlock.Settings.create().mapColor(MapColor.WHITE).strength(5.0F, 1200.0F).sounds(BlockSoundGroup.METAL));
+    }
+
+    public MaterialisingTableBlock(AbstractBlock.Settings settings) {
+        super(settings);
         this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH));
-        //breakByTool(FabricToolTags.PICKAXES).dropsLike(Materialisation.MATERIALISING_TABLE)
+    }
+
+    public static final MapCodec<MaterialisingTableBlock> CODEC = createCodec(MaterialisingTableBlock::new);
+
+    @Override
+    protected MapCodec<? extends HorizontalFacingBlock> getCodec() {
+        return CODEC;
     }
     
     @Override
@@ -46,10 +55,9 @@ public class MaterialisingTableBlock extends HorizontalFacingBlock {
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(FACING);
     }
-    
-    @SuppressWarnings("deprecation")
+
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         if (world.isClient) {
             return ActionResult.SUCCESS;
         } else {
@@ -57,8 +65,7 @@ public class MaterialisingTableBlock extends HorizontalFacingBlock {
             return ActionResult.CONSUME;
         }
     }
-    
-    @SuppressWarnings("deprecation")
+
     @Override
     public NamedScreenHandlerFactory createScreenHandlerFactory(BlockState state, World world, BlockPos pos) {
         return new SimpleNamedScreenHandlerFactory((i, playerInventory, playerEntity) -> {
@@ -66,25 +73,21 @@ public class MaterialisingTableBlock extends HorizontalFacingBlock {
         }, TITLE);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public BlockRenderType getRenderType(BlockState blockState_1) {
         return BlockRenderType.MODEL;
     }
     
-    @SuppressWarnings("deprecation")
     @Override
     public boolean hasSidedTransparency(BlockState blockState_1) {
         return true;
     }
-    
-    @SuppressWarnings("deprecation")
+
     @Override
-    public boolean canPathfindThrough(BlockState blockState_1, BlockView blockView_1, BlockPos blockPos_1, NavigationType type) {
+    public boolean canPathfindThrough(BlockState state, NavigationType type) {
         return false;
     }
-    
-    @SuppressWarnings("deprecation")
+
     @Override
     public VoxelShape getOutlineShape(BlockState blockState, BlockView blockView, BlockPos blockPos, ShapeContext context) {
         return SHAPE;

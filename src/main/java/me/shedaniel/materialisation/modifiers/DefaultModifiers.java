@@ -55,7 +55,7 @@ public class DefaultModifiers implements DefaultModifiersSupplier {
                     textList.add(Text.translatable("desc.materialisation.haste.line5", TWO_DECIMAL_FORMATTER.format((level <= 0) ? 1 : 1 + level * 0.5f)));
                     return textList;
                 })
-                .model(new Identifier(ModReference.MOD_ID, "modifier/pickaxe_haste"), ToolType.PICKAXE)
+                .model(Identifier.of(ModReference.MOD_ID, "modifier/pickaxe_haste"), ToolType.PICKAXE)
                 .build();
         /*
         DIAMOND = Modifier.builder()
@@ -72,10 +72,10 @@ public class DefaultModifiers implements DefaultModifiersSupplier {
                     textList.add(Text.translatable("desc.materialisation.diamond.line5"));
                     return textList;
                 })
-                .model(new Identifier(ModReference.MOD_ID, "modifier/pickaxe_diamond"), ToolType.PICKAXE)
-                .model(new Identifier(ModReference.MOD_ID, "modifier/axe_diamond"), ToolType.AXE, ToolType.MEGA_AXE)
-                .model(new Identifier(ModReference.MOD_ID, "modifier/hammer_diamond"), ToolType.HAMMER)
-                .model(new Identifier(ModReference.MOD_ID, "modifier/shovel_diamond"), ToolType.SHOVEL)
+                .model(Identifier.of(ModReference.MOD_ID, "modifier/pickaxe_diamond"), ToolType.PICKAXE)
+                .model(Identifier.of(ModReference.MOD_ID, "modifier/axe_diamond"), ToolType.AXE, ToolType.MEGA_AXE)
+                .model(Identifier.of(ModReference.MOD_ID, "modifier/hammer_diamond"), ToolType.HAMMER)
+                .model(Identifier.of(ModReference.MOD_ID, "modifier/shovel_diamond"), ToolType.SHOVEL)
                 .build();
 
          */
@@ -91,7 +91,7 @@ public class DefaultModifiers implements DefaultModifiersSupplier {
                     textList.add(Text.translatable("desc.materialisation.emerald.line4", 300));
                     return textList;
                 })
-                .model(new Identifier(ModReference.MOD_ID, "modifier/pickaxe_emerald"), ToolType.PICKAXE)
+                .model(Identifier.of(ModReference.MOD_ID, "modifier/pickaxe_emerald"), ToolType.PICKAXE)
                 .build();
         SHARP = Modifier.builder()
                 .applicableToolTypes(ImmutableList.copyOf(ToolType.WEAPON))

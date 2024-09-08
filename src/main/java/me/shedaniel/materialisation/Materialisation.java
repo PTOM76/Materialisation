@@ -8,11 +8,13 @@ import me.shedaniel.materialisation.config.MaterialisationConfig;
 import me.shedaniel.materialisation.gui.MaterialPreparerScreenHandler;
 import me.shedaniel.materialisation.gui.MaterialisingTableScreenHandler;
 import me.shedaniel.materialisation.items.*;
+import me.shedaniel.materialisation.network.RenamePayload;
 import me.shedaniel.materialisation.utils.ResettableSimpleRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.SharedConstants;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -23,6 +25,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.resource.featuretoggle.FeatureFlags;
 import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -39,8 +42,8 @@ public class Materialisation implements ModInitializer {
     public static final Block MATERIAL_PREPARER = new MaterialPreparerBlock();
     public static final ScreenHandlerType<MaterialPreparerScreenHandler> MATERIAL_PREPARER_SCREEN_HANDLER = new ScreenHandlerType<>(MaterialPreparerScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
     public static final ScreenHandlerType<MaterialisingTableScreenHandler> MATERIALISING_TABLE_SCREEN_HANDLER = new ScreenHandlerType<>(MaterialisingTableScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
-    public static final Identifier MATERIALISING_TABLE_RENAME = new Identifier(ModReference.MOD_ID, "materialising_table_rename");
-    public static final Identifier MATERIALISING_TABLE_PLAY_SOUND = new Identifier(ModReference.MOD_ID, "materialising_table_play_sound");
+    public static final Identifier MATERIALISING_TABLE_RENAME = Identifier.of(ModReference.MOD_ID, "materialising_table_rename");
+    public static final Identifier MATERIALISING_TABLE_PLAY_SOUND = Identifier.of(ModReference.MOD_ID, "materialising_table_play_sound");
     public static final Item MATERIALISED_PICKAXE = new MaterialisedPickaxeItem(new Item.Settings());
     public static final Item MATERIALISED_AXE = new MaterialisedAxeItem(new Item.Settings());
     public static final Item MATERIALISED_SHOVEL = new MaterialisedShovelItem(new Item.Settings());
@@ -92,15 +95,25 @@ public class Materialisation implements ModInitializer {
     @Override
     public void onInitialize() {
         MaterialisationModifierMaterials.register();
+        MaterialisationComponentTypes.register();
         registerBlock("materialising_table", MATERIALISING_TABLE, ItemGroups.FUNCTIONAL);
         registerBlock("material_preparer", MATERIAL_PREPARER, ItemGroups.FUNCTIONAL);
-        ServerPlayNetworking.registerGlobalReceiver(MATERIALISING_TABLE_RENAME, (server, player, handler, buf, packetSender) -> {
-            if (player.currentScreenHandler instanceof MaterialisingTableScreenHandler) {
-                MaterialisingTableScreenHandler container = (MaterialisingTableScreenHandler)player.currentScreenHandler;
-                String string_1 = SharedConstants.stripInvalidChars(buf.readString(32767));
-                if (string_1.length() <= 35)
-                    container.setNewItemName(string_1);
-            }
+
+        PayloadTypeRegistry.playC2S().register(RenamePayload.ID, RenamePayload.CODEC);
+        ServerPlayConnectionEvents.INIT.register((handler, server) -> {
+
+            ServerPlayNetworking.registerGlobalReceiver(RenamePayload.ID, (payload, context) -> {
+                String string = payload.getData();
+                ServerPlayerEntity player = context.player();
+                player.server.execute(() -> {
+                    if (player.currentScreenHandler instanceof MaterialisingTableScreenHandler) {
+                        MaterialisingTableScreenHandler container = (MaterialisingTableScreenHandler) player.currentScreenHandler;
+                        if (string.length() <= 35)
+                            container.setNewItemName(string);
+                    }
+                });
+            });
+
         });
         registerItem("materialised_pickaxe", MATERIALISED_PICKAXE);
         registerItem("materialised_axe", MATERIALISED_AXE);
@@ -146,15 +159,15 @@ public class Materialisation implements ModInitializer {
     }
     
     private void registerBlock(String name, Block block, Item.Settings settings) {
-        Registry.register(Registries.BLOCK, new Identifier(ModReference.MOD_ID, name), block);
+        Registry.register(Registries.BLOCK, Identifier.of(ModReference.MOD_ID, name), block);
         registerItem(name, new BlockItem(block, settings));
     }
     
     private void registerItem(String name, Item item) {
-        Registry.register(Registries.ITEM, new Identifier(ModReference.MOD_ID, name), item);
+        Registry.register(Registries.ITEM, Identifier.of(ModReference.MOD_ID, name), item);
     }
 
     private void registerScreenHandler(String name, ScreenHandlerType<?> screenHandlerType) {
-        Registry.register(Registries.SCREEN_HANDLER, new Identifier(ModReference.MOD_ID, name), screenHandlerType);
+        Registry.register(Registries.SCREEN_HANDLER, Identifier.of(ModReference.MOD_ID, name), screenHandlerType);
     }
 }

@@ -1,8 +1,7 @@
 package me.shedaniel.materialisation.blocks;
 
-import me.shedaniel.materialisation.ModReference;
+import com.mojang.serialization.MapCodec;
 import me.shedaniel.materialisation.gui.MaterialPreparerScreenHandler;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.entity.ai.pathing.NavigationType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -17,8 +16,6 @@ import net.minecraft.stat.Stats;
 import net.minecraft.state.StateManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -37,8 +34,19 @@ public class MaterialPreparerBlock extends HorizontalFacingBlock implements Name
     }
     
     public MaterialPreparerBlock() {
-        super(FabricBlockSettings.create().mapColor(MapColor.OAK_TAN).burnable().strength(2.5F, 3).drops(new Identifier(ModReference.MOD_ID, "blocks/material_preparer")).sounds(BlockSoundGroup.WOOD));
+        this(AbstractBlock.Settings.create().mapColor(MapColor.OAK_TAN).burnable().strength(2.5F, 3).sounds(BlockSoundGroup.WOOD));
+    }
+
+    public MaterialPreparerBlock(AbstractBlock.Settings settings) {
+        super(settings);
         this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH));
+    }
+
+    public static final MapCodec<MaterialPreparerBlock> CODEC = createCodec(MaterialPreparerBlock::new);
+
+    @Override
+    protected MapCodec<? extends HorizontalFacingBlock> getCodec() {
+        return CODEC;
     }
     
     @Override
@@ -51,9 +59,8 @@ public class MaterialPreparerBlock extends HorizontalFacingBlock implements Name
         builder.add(FACING);
     }
     
-    @SuppressWarnings("deprecation")
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hitResult) {
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         if (world.isClient) {
             return ActionResult.SUCCESS;
         } else {
@@ -62,32 +69,27 @@ public class MaterialPreparerBlock extends HorizontalFacingBlock implements Name
             return ActionResult.CONSUME;
         }
     }
-    
-    @SuppressWarnings("deprecation")
+
     @Override
     public NamedScreenHandlerFactory createScreenHandlerFactory(BlockState state, World world, BlockPos pos) {
         return new SimpleNamedScreenHandlerFactory((i, playerInventory, playerEntity) -> new MaterialPreparerScreenHandler(i, playerInventory, ScreenHandlerContext.create(world, pos)), TITLE);
     }
     
-    @SuppressWarnings("deprecation")
     @Override
     public BlockRenderType getRenderType(BlockState blockState_1) {
         return BlockRenderType.MODEL;
     }
     
-    @SuppressWarnings("deprecation")
     @Override
     public boolean hasSidedTransparency(BlockState blockState_1) {
         return true;
     }
     
-    @SuppressWarnings("deprecation")
     @Override
-    public boolean canPathfindThrough(BlockState blockState_1, BlockView blockView_1, BlockPos blockPos_1, NavigationType type) {
+    public boolean canPathfindThrough(BlockState state, NavigationType type) {
         return false;
     }
-    
-    @SuppressWarnings("deprecation")
+
     @Override
     public VoxelShape getOutlineShape(BlockState blockState, BlockView blockView, BlockPos blockPos, ShapeContext context) {
         return SHAPE;

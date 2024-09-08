@@ -8,6 +8,7 @@ import me.shedaniel.materialisation.api.Modifier;
 import me.shedaniel.materialisation.api.PartMaterials;
 import me.shedaniel.materialisation.items.ColoredItem;
 import me.shedaniel.materialisation.items.MaterialisedMiningTool;
+import me.shedaniel.materialisation.utils.MaterialisationDataUtil;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
@@ -29,7 +30,7 @@ import java.util.function.Function;
 @Environment(EnvType.CLIENT)
 public class MaterialisationREIPlugin implements REIClientPlugin {
     
-    public static final Identifier PLUGIN = new Identifier(ModReference.MOD_ID, "rei_plugin");
+    public static final Identifier PLUGIN = Identifier.of(ModReference.MOD_ID, "rei_plugin");
     public static final CategoryIdentifier<MaterialPreparerDisplay> MATERIAL_PREPARER = CategoryIdentifier.of(ModReference.MOD_ID, "material_preparer");
     public static final CategoryIdentifier<MaterialisingTableDisplay> MATERIALISING_TABLE = CategoryIdentifier.of(ModReference.MOD_ID, "materialising_table");
     public static final CategoryIdentifier<MaterialisationModifiersDisplay> MODIFIERS = CategoryIdentifier.of(ModReference.MOD_ID, "modifiers");
@@ -146,8 +147,8 @@ public class MaterialisationREIPlugin implements REIClientPlugin {
         entryRegistry.addEntriesAfter(EntryStacks.of(Materialisation.MATERIALISED_HAMMER), hammers);
         entryRegistry.addEntriesAfter(EntryStacks.of(Materialisation.MATERIALISED_MEGAAXE), megaaxes);
         
-        entryRegistry.removeEntryIf(entry -> entry.getType() == VanillaEntryTypes.ITEM && ((ItemStack) entry.getValue()).getItem() instanceof MaterialisedMiningTool && !((ItemStack) entry.getValue()).getOrCreateNbt().contains("mt_done_tool") && !((ItemStack) entry.getValue()).getOrCreateNbt().getBoolean("mt_done_tool"));
-        entryRegistry.removeEntryIf(entry -> entry.getType() == VanillaEntryTypes.ITEM && ((ItemStack) entry.getValue()).getItem() instanceof ColoredItem && !((ItemStack) entry.getValue()).getOrCreateNbt().contains("mt_0_material"));
+        entryRegistry.removeEntryIf(entry -> entry.getType() == VanillaEntryTypes.ITEM && ((ItemStack) entry.getValue()).getItem() instanceof MaterialisedMiningTool && !(MaterialisationDataUtil.getNbt((ItemStack) entry.getValue()).contains("mt_done_tool") && !MaterialisationDataUtil.getNbt((ItemStack) entry.getValue()).getBoolean("mt_done_tool")));
+        entryRegistry.removeEntryIf(entry -> entry.getType() == VanillaEntryTypes.ITEM && ((ItemStack) entry.getValue()).getItem() instanceof ColoredItem && !(MaterialisationDataUtil.getNbt((ItemStack) entry.getValue()).contains("mt_0_material")));
     }
     
 }

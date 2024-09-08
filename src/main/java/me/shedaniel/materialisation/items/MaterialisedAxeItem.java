@@ -1,6 +1,5 @@
 package me.shedaniel.materialisation.items;
 
-import com.google.common.collect.ImmutableMultimap;
 import me.shedaniel.materialisation.MaterialisationUtils;
 import me.shedaniel.materialisation.api.ToolType;
 import net.fabricmc.api.EnvType;
@@ -8,10 +7,10 @@ import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.PillarBlock;
-import net.minecraft.client.item.TooltipContext;
+import net.minecraft.component.type.AttributeModifierSlot;
+import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,11 +18,13 @@ import net.minecraft.item.AxeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -31,12 +32,14 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class MaterialisedAxeItem extends AxeItem implements MaterialisedMiningTool {
-    public MaterialisedAxeItem(Settings settings) {
-        super(MaterialisationUtils.DUMMY_MATERIAL, 0, 0, settings.maxDamage(0));
-        
-        ImmutableMultimap.Builder<EntityAttribute, EntityAttributeModifier> builder = ImmutableMultimap.builder();
-        builder.put(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(ATTACK_SPEED_MODIFIER_ID, "Tool modifier", -3.1F, EntityAttributeModifier.Operation.ADDITION));
-        this.attributeModifiers = builder.build();
+    public MaterialisedAxeItem(Item.Settings settings) {
+        super(MaterialisationUtils.DUMMY_MATERIAL, settings
+                .maxDamage(0)
+                .attributeModifiers(
+                AttributeModifiersComponent.builder()
+                        .add(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(BASE_ATTACK_SPEED_MODIFIER_ID, -3.1D, EntityAttributeModifier.Operation.ADD_VALUE), AttributeModifierSlot.HAND)
+                        .build()
+        ));
     }
 
     @Override
@@ -65,7 +68,7 @@ public class MaterialisedAxeItem extends AxeItem implements MaterialisedMiningTo
                 if (playerEntity_1 != null) {
                     if (!playerEntity_1.getWorld().isClient && !playerEntity_1.getAbilities().creativeMode)
                         if (MaterialisationUtils.applyDamage(itemStack, 1, playerEntity_1.getRandom())) {
-                            playerEntity_1.sendToolBreakStatus(context.getHand());
+                            playerEntity_1.sendEquipmentBreakStatus(this, context.getHand() == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
                             Item item_1 = itemStack.getItem();
                             itemStack.decrement(1);
                             playerEntity_1.incrementStat(Stats.BROKEN.getOrCreateStat(item_1));
@@ -88,7 +91,7 @@ public class MaterialisedAxeItem extends AxeItem implements MaterialisedMiningTo
         if (!livingEntity_1.getWorld().isClient && (!(livingEntity_1 instanceof PlayerEntity) || !((PlayerEntity) livingEntity_1).getAbilities().creativeMode))
             if (MaterialisationUtils.getToolDurability(stack) > 0)
                 if (MaterialisationUtils.applyDamage(stack, 2, livingEntity_1.getRandom())) {
-                    livingEntity_1.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND);
+                    livingEntity_1.sendEquipmentBreakStatus(this, EquipmentSlot.MAINHAND);
                     Item item_1 = stack.getItem();
                     stack.decrement(1);
                     if (livingEntity_1 instanceof PlayerEntity) {
@@ -105,7 +108,7 @@ public class MaterialisedAxeItem extends AxeItem implements MaterialisedMiningTo
             if (!livingEntity_1.getWorld().isClient && (!(livingEntity_1 instanceof PlayerEntity) || !((PlayerEntity) livingEntity_1).getAbilities().creativeMode))
                 if (MaterialisationUtils.getToolDurability(stack) > 0)
                     if (MaterialisationUtils.applyDamage(stack, 1, livingEntity_1.getRandom())) {
-                        livingEntity_1.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND);
+                        livingEntity_1.sendEquipmentBreakStatus(this, EquipmentSlot.MAINHAND);
                         Item item_1 = stack.getItem();
                         stack.decrement(1);
                         if (livingEntity_1 instanceof PlayerEntity) {
@@ -118,8 +121,8 @@ public class MaterialisedAxeItem extends AxeItem implements MaterialisedMiningTo
     
     @Environment(EnvType.CLIENT)
     @Override
-    public void appendTooltip(ItemStack stack, World world_1, List<Text> list_1, TooltipContext tooltipContext_1) {
-        MaterialisationUtils.appendToolTooltip(stack, this, world_1, list_1, tooltipContext_1);
+    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> list_1, TooltipType type) {
+        MaterialisationUtils.appendToolTooltip(stack, this, null, list_1, context);
     }
 
     @Override

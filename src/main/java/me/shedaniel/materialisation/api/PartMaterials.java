@@ -22,7 +22,7 @@ public class PartMaterials {
     }
     
     public static GeneratedMaterial getNewMaterial(String name) {
-        return new GeneratedMaterial(new Identifier(name));
+        return new GeneratedMaterial(Identifier.of(name));
     }
     
     @Deprecated
