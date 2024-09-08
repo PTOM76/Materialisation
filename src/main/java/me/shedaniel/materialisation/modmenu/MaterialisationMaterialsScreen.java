@@ -7,7 +7,7 @@ import me.shedaniel.materialisation.api.PartMaterials;
 import me.shedaniel.materialisation.config.ConfigHelper;
 import me.shedaniel.materialisation.config.ConfigPack;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -15,11 +15,8 @@ import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
-import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -40,7 +37,7 @@ public class MaterialisationMaterialsScreen extends Screen {
     public static void overlayBackground(int x1, int y1, int x2, int y2, int red, int green, int blue, int startAlpha, int endAlpha) {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
-        MinecraftClient.getInstance().getTextureManager().bindTexture(DrawableHelper.OPTIONS_BACKGROUND_TEXTURE);
+        MinecraftClient.getInstance().getTextureManager().bindTexture(OPTIONS_BACKGROUND_TEXTURE);
         int width = MinecraftClient.getInstance().getWindow().getScaledWidth();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE);
@@ -72,8 +69,8 @@ public class MaterialisationMaterialsScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        addDrawableChild(materialList = new MaterialisationMaterialListWidget(client, width / 2 - 10, height, 28 + 5, height - 5, DrawableHelper.OPTIONS_BACKGROUND_TEXTURE));
-        addDrawableChild(descriptionList = new MaterialisationDescriptionListWidget(client, width / 2 - 10, height, 28 + 5, height - 5, DrawableHelper.OPTIONS_BACKGROUND_TEXTURE));
+        addDrawableChild(materialList = new MaterialisationMaterialListWidget(client, width / 2 - 10, height, 28 + 5, height - 5, OPTIONS_BACKGROUND_TEXTURE));
+        addDrawableChild(descriptionList = new MaterialisationDescriptionListWidget(client, width / 2 - 10, height, 28 + 5, height - 5, OPTIONS_BACKGROUND_TEXTURE));
         addSelectableChild(installButton = ButtonWidget.builder(Text.translatable("config.button.materialisation.install"), var1 -> {
             assert client != null;
             client.setScreen(new MaterialisationInstallScreen(this));
@@ -154,20 +151,19 @@ public class MaterialisationMaterialsScreen extends Screen {
     }
     
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float delta) {
-        renderBackgroundTexture(0);
-        super.render(stack, mouseX, mouseY, delta);
-        materialList.render(stack, mouseX, mouseY, delta);
-        descriptionList.render(stack, mouseX, mouseY, delta);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        renderBackgroundTexture(context);
+        super.render(context, mouseX, mouseY, delta);
+        materialList.render(context, mouseX, mouseY, delta);
+        descriptionList.render(context, mouseX, mouseY, delta);
         //overlayBackground(0, 0, width, 28, 64, 64, 64, 255, 255);
         //overlayBackground(0, height - 5, width, height, 64, 64, 64, 255, 255);
-        installButton.render(stack, mouseX, mouseY, delta);
-        reloadButton.render(stack, mouseX, mouseY, delta);
-        backButton.render(stack, mouseX, mouseY, delta);
+        installButton.render(context, mouseX, mouseY, delta);
+        reloadButton.render(context, mouseX, mouseY, delta);
+        backButton.render(context, mouseX, mouseY, delta);
 
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ZERO, GlStateManager.DstFactor.ONE);
-        RenderSystem.disableTexture();
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE);
@@ -176,10 +172,9 @@ public class MaterialisationMaterialsScreen extends Screen {
         buffer.vertex(this.width, 28, 0.0D).color(0, 0, 0, 255).texture(1.0F, 0.0F).next();
         buffer.vertex(0, 28, 0.0D).color(0, 0, 0, 255).texture(0.0F, 0.0F).next();
         tessellator.draw();;
-        RenderSystem.enableTexture();
         RenderSystem.disableBlend();
 
-        drawCenteredText(stack, textRenderer, title, width / 2, 10, 16777215);
+        context.drawCenteredTextWithShadow(textRenderer, title, width / 2, 10, 16777215);
     }
     
 }

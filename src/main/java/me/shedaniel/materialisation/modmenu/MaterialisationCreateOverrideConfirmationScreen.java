@@ -5,10 +5,9 @@ import com.google.gson.JsonObject;
 import me.shedaniel.materialisation.api.PartMaterial;
 import me.shedaniel.materialisation.config.ConfigHelper;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -99,16 +98,16 @@ public class MaterialisationCreateOverrideConfirmationScreen extends Screen {
             }
             entries.add(new MaterialisationOverridesListWidget.TextEntry(Text.literal(" ")));
         }
-        addDrawableChild(listWidget = new MaterialisationOverridesListWidget(client, width, height, 28, height, DrawableHelper.OPTIONS_BACKGROUND_TEXTURE));
+        addDrawableChild(listWidget = new MaterialisationOverridesListWidget(client, width, height, 28, height, OPTIONS_BACKGROUND_TEXTURE));
         for (MaterialisationOverridesListWidget.Entry entry : entries) {
             listWidget.addItem(entry);
         }
     }
     
     @Override
-    public void render(MatrixStack stack, int int_1, int int_2, float float_1) {
-        listWidget.render(stack, int_1, int_2, float_1);
-        super.render(stack, int_1, int_2, float_1);
-        drawCenteredText(stack, textRenderer, title, width / 2, 10, 16777215);
+    public void render(DrawContext context, int int_1, int int_2, float float_1) {
+        listWidget.render(context, int_1, int_2, float_1);
+        super.render(context, int_1, int_2, float_1);
+        context.drawCenteredTextWithShadow(textRenderer, title, width / 2, 10, 16777215);
     }
 }

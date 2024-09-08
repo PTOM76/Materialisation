@@ -4,8 +4,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.shedaniel.materialisation.ModReference;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -46,19 +46,19 @@ public class MaterialPreparerScreen extends MaterialisingScreenBase<MaterialPrep
     }
     
     @Override
-    protected void drawForeground(MatrixStack matrices, int mouseX, int mouseY) {
+    protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
         RenderSystem.disableBlend();
-        this.textRenderer.draw(matrices, this.title, 6f, 6f, 4210752);
+        context.drawText(this.textRenderer, this.title, 8, 6, 4210752, false);
     }
 
     @Override
-    protected void drawBackground(MatrixStack matrixStack, float v, int i, int i1) {
+    protected void drawBackground(DrawContext context, float v, int i, int i1) {
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
-        this.drawTexture(matrixStack, x, y, 0, 0, this.backgroundWidth, this.backgroundHeight);
+        context.drawTexture(TEXTURE, x, y, 0, 0, this.backgroundWidth, this.backgroundHeight);
         if ((this.handler.getSlot(0).hasStack() || this.handler.getSlot(1).hasStack()) && !this.handler.getSlot(2).hasStack()) {
-            this.drawTexture(matrixStack, x + 99, y + 45 - 26, this.backgroundWidth, 0, 28, 21);
+            context.drawTexture(TEXTURE, x + 99, y + 45 - 26, this.backgroundWidth, 0, 28, 21);
         }
     }
 

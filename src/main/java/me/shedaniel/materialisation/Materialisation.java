@@ -12,7 +12,6 @@ import me.shedaniel.materialisation.utils.ResettableSimpleRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.SharedConstants;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
@@ -21,6 +20,8 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.resource.featuretoggle.FeatureFlags;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.Level;
@@ -36,10 +37,8 @@ public class Materialisation implements ModInitializer {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final Block MATERIALISING_TABLE = new MaterialisingTableBlock();
     public static final Block MATERIAL_PREPARER = new MaterialPreparerBlock();
-    public static final Identifier MATERIAL_PREPARER_CONTAINER = new Identifier(ModReference.MOD_ID, "material_preparer");
-    public static final Identifier MATERIALISING_TABLE_CONTAINER = new Identifier(ModReference.MOD_ID, "materialising_table");
-    public static final ScreenHandlerType<MaterialPreparerScreenHandler> MATERIAL_PREPARER_SCREEN_HANDLER = ScreenHandlerRegistry.registerSimple(Materialisation.MATERIAL_PREPARER_CONTAINER, MaterialPreparerScreenHandler::new);
-    public static final ScreenHandlerType<MaterialisingTableScreenHandler> MATERIALISING_TABLE_SCREEN_HANDLER = ScreenHandlerRegistry.registerSimple(Materialisation.MATERIALISING_TABLE_CONTAINER, MaterialisingTableScreenHandler::new);
+    public static final ScreenHandlerType<MaterialPreparerScreenHandler> MATERIAL_PREPARER_SCREEN_HANDLER = new ScreenHandlerType<>(MaterialPreparerScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
+    public static final ScreenHandlerType<MaterialisingTableScreenHandler> MATERIALISING_TABLE_SCREEN_HANDLER = new ScreenHandlerType<>(MaterialisingTableScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
     public static final Identifier MATERIALISING_TABLE_RENAME = new Identifier(ModReference.MOD_ID, "materialising_table_rename");
     public static final Identifier MATERIALISING_TABLE_PLAY_SOUND = new Identifier(ModReference.MOD_ID, "materialising_table_play_sound");
     public static final Item MATERIALISED_PICKAXE = new MaterialisedPickaxeItem(new Item.Settings());
@@ -124,6 +123,10 @@ public class Materialisation implements ModInitializer {
         registerItem("sword_blade_pattern", SWORD_BLADE_PATTERN);
         registerItem("hammer_head_pattern", HAMMER_HEAD_PATTERN);
         registerItem("megaaxe_head_pattern", MEGAAXE_HEAD_PATTERN);
+
+        registerScreenHandler("material_preparer", MATERIAL_PREPARER_SCREEN_HANDLER);
+        registerScreenHandler("materialising_table", MATERIALISING_TABLE_SCREEN_HANDLER);
+
         try {
             ConfigHelper.loadDefault();
         } catch (Throwable e) {
@@ -137,7 +140,7 @@ public class Materialisation implements ModInitializer {
     }
     
     @SuppressWarnings("SameParameterValue")
-    private void registerBlock(String name, Block block, ItemGroup group) {
+    private void registerBlock(String name, Block block, RegistryKey<ItemGroup> group) {
         registerBlock(name, block, new Item.Settings());
         ItemGroupEvents.modifyEntriesEvent(group).register(entries -> entries.add(block));
     }
@@ -149,5 +152,9 @@ public class Materialisation implements ModInitializer {
     
     private void registerItem(String name, Item item) {
         Registry.register(Registries.ITEM, new Identifier(ModReference.MOD_ID, name), item);
+    }
+
+    private void registerScreenHandler(String name, ScreenHandlerType<?> screenHandlerType) {
+        Registry.register(Registries.SCREEN_HANDLER, new Identifier(ModReference.MOD_ID, name), screenHandlerType);
     }
 }

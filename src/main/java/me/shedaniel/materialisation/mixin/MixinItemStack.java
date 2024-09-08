@@ -9,17 +9,14 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.Collection;
-import java.util.Map;
 
 @Mixin(ItemStack.class)
 public abstract class MixinItemStack {
@@ -29,10 +26,6 @@ public abstract class MixinItemStack {
     
     @Shadow
     public abstract NbtCompound getNbt();
-
-    public NbtCompound getTag() {
-        return getNbt();
-    }
     
     @Shadow
     public abstract boolean hasEnchantments();
@@ -49,7 +42,7 @@ public abstract class MixinItemStack {
     @Inject(method = "isDamageable", at = @At("HEAD"), cancellable = true)
     public void isDamageable(CallbackInfoReturnable<Boolean> returnable) {
         if (getItem() instanceof MaterialisedMiningTool) {
-            NbtCompound compoundTag_1 = getTag();
+            NbtCompound compoundTag_1 = getNbt();
             returnable.setReturnValue(compoundTag_1 == null || !compoundTag_1.getBoolean("Unbreakable"));
         }
     }

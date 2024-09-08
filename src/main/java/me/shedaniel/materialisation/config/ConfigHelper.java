@@ -14,7 +14,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Lazy;
 import net.minecraft.util.Pair;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ExecutorService;

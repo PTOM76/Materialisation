@@ -3,7 +3,6 @@ package me.shedaniel.materialisation.blocks;
 import me.shedaniel.materialisation.ModReference;
 import me.shedaniel.materialisation.gui.MaterialPreparerScreenHandler;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricMaterialBuilder;
 import net.minecraft.block.*;
 import net.minecraft.entity.ai.pathing.NavigationType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -38,13 +37,13 @@ public class MaterialPreparerBlock extends HorizontalFacingBlock implements Name
     }
     
     public MaterialPreparerBlock() {
-        super(FabricBlockSettings.of(new FabricMaterialBuilder(Material.WOOD.getColor()).burnable().build()).strength(2.5F, 3).drops(new Identifier(ModReference.MOD_ID, "blocks/material_preparer")).sounds(BlockSoundGroup.WOOD));
+        super(FabricBlockSettings.create().mapColor(MapColor.OAK_TAN).burnable().strength(2.5F, 3).drops(new Identifier(ModReference.MOD_ID, "blocks/material_preparer")).sounds(BlockSoundGroup.WOOD));
         this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH));
     }
     
     @Override
     public BlockState getPlacementState(ItemPlacementContext placementContext) {
-        return getDefaultState().with(FACING, placementContext.getPlayerFacing().getOpposite());
+        return getDefaultState().with(FACING, placementContext.getHorizontalPlayerFacing().getOpposite());
     }
 
     @Override
@@ -67,9 +66,7 @@ public class MaterialPreparerBlock extends HorizontalFacingBlock implements Name
     @SuppressWarnings("deprecation")
     @Override
     public NamedScreenHandlerFactory createScreenHandlerFactory(BlockState state, World world, BlockPos pos) {
-        return new SimpleNamedScreenHandlerFactory((i, playerInventory, playerEntity) -> {
-            return new MaterialPreparerScreenHandler(i, playerInventory, ScreenHandlerContext.create(world, pos));
-        }, TITLE);
+        return new SimpleNamedScreenHandlerFactory((i, playerInventory, playerEntity) -> new MaterialPreparerScreenHandler(i, playerInventory, ScreenHandlerContext.create(world, pos)), TITLE);
     }
     
     @SuppressWarnings("deprecation")

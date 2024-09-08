@@ -5,11 +5,11 @@ import me.shedaniel.materialisation.api.MaterialsPack;
 import me.shedaniel.materialisation.api.PartMaterial;
 import me.shedaniel.materialisation.config.ConfigPackInfo;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -104,9 +104,9 @@ public class MaterialisationDescriptionListWidget extends DynamicElementListWidg
         }
         
         @Override
-        public void render(MatrixStack stack, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
-            int i = MinecraftClient.getInstance().textRenderer.drawWithShadow(stack, s, x, y, 16777215);
-            fillGradient(stack, i + 1, y + 1, i + 1 + entryHeight, y + 1 + entryHeight, color, color);
+        public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
+            int i = context.drawText(MinecraftClient.getInstance().textRenderer, s, x, y, 16777215, true);
+            context.fillGradient(i + 1, y + 1, i + 1 + entryHeight, y + 1 + entryHeight, color, color);
         }
         
         @Override
@@ -138,11 +138,11 @@ public class MaterialisationDescriptionListWidget extends DynamicElementListWidg
         }
         
         @Override
-        public void render(MatrixStack stack, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
-            MinecraftClient.getInstance().textRenderer.drawWithShadow(stack, s, x, y + 10, 16777215);
+        public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
+            context.drawText(MinecraftClient.getInstance().textRenderer, s, x, y + 10, 16777215, true);
             overrideButton.setX(x + entryWidth - overrideButton.getWidth());
             overrideButton.setY(y);
-            overrideButton.render(stack, mouseX, mouseY, delta);
+            overrideButton.render(context, mouseX, mouseY, delta);
         }
         
         @Override
@@ -170,8 +170,8 @@ public class MaterialisationDescriptionListWidget extends DynamicElementListWidg
         }
         
         @Override
-        public void render(MatrixStack stack, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
-            MinecraftClient.getInstance().textRenderer.drawWithShadow(stack, s, x, y, 16777215);
+        public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
+            context.drawText(MinecraftClient.getInstance().textRenderer, s, x, y, 16777215, true);
         }
         
         @Override
@@ -199,7 +199,7 @@ public class MaterialisationDescriptionListWidget extends DynamicElementListWidg
         }
         
         @Override
-        public void render(MatrixStack matrixStack, int i, int i1, int i2, int i3, int i4, int i5, int i6, boolean b, float v) {
+        public void render(DrawContext context, int i, int i1, int i2, int i3, int i4, int i5, int i6, boolean b, float v) {
             
         }
         

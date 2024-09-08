@@ -1,8 +1,6 @@
 package me.shedaniel.materialisation.api;
 
 import com.google.common.collect.Maps;
-//import it.unimi.dsi.fastutil.objects.Reference2ReferenceMap;
-//import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;

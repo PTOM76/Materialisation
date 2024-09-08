@@ -6,10 +6,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import me.shedaniel.materialisation.config.ConfigHelper;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 
@@ -54,7 +53,7 @@ public class MaterialisationInstallScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        addDrawableChild(listWidget = new MaterialisationInstallListWidget(client, width, height, 28, height - 28, DrawableHelper.OPTIONS_BACKGROUND_TEXTURE));
+        addDrawableChild(listWidget = new MaterialisationInstallListWidget(client, width, height, 28, height - 28, OPTIONS_BACKGROUND_TEXTURE));
         if (!loaded) {
             loaded = true;
             refresh();
@@ -120,14 +119,14 @@ public class MaterialisationInstallScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float delta) {
-        renderBackgroundTexture(0);
-        super.render(stack, mouseX, mouseY, delta);
-        listWidget.render(stack, mouseX, mouseY, delta);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        renderBackgroundTexture(context);
+        super.render(context, mouseX, mouseY, delta);
+        listWidget.render(context, mouseX, mouseY, delta);
         overlayBackground(0, height - 28, width, height, 64, 64, 64, 255, 255);
-        drawCenteredText(stack, textRenderer, title, width / 2, 10, 16777215);
-        refreshButton.render(stack, mouseX, mouseY, delta);
-        backButton.render(stack, mouseX, mouseY, delta);
-        openFolderButton.render(stack, mouseX, mouseY, delta);
+        context.drawCenteredTextWithShadow(textRenderer, title, width / 2, 10, 16777215);
+        refreshButton.render(context, mouseX, mouseY, delta);
+        backButton.render(context, mouseX, mouseY, delta);
+        openFolderButton.render(context, mouseX, mouseY, delta);
     }
 }

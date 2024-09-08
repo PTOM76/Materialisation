@@ -2,8 +2,8 @@ package me.shedaniel.materialisation.modmenu;
 
 import me.shedaniel.clothconfig2.gui.widget.DynamicElementListWidget;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
 @SuppressWarnings({"unused", "CanBeFinal"})
@@ -51,8 +51,8 @@ public class MaterialisationCreateOverrideListWidget extends DynamicElementListW
         }
         
         @Override
-        public void render(MatrixStack stack, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
-            MinecraftClient.getInstance().textRenderer.drawWithShadow(stack, isEdited() && !isValid() ? "§c§o" + display : isEdited() ? "§o" + display : "§7" + display, x, y + 5, 16777215);
+        public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
+            context.drawText(MinecraftClient.getInstance().textRenderer, isEdited() && !isValid() ? "§c§o" + display : isEdited() ? "§o" + display : "§7" + display, x, y + 5, 16777215, true);
         }
         
         @Override

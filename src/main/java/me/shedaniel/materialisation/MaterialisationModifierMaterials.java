@@ -8,6 +8,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 
 public class MaterialisationModifierMaterials {
@@ -28,7 +29,7 @@ public class MaterialisationModifierMaterials {
     }
 
     @SuppressWarnings("unused")
-    private static void registerBlock(String name, Block block, ItemGroup group) {
+    private static void registerBlock(String name, Block block, RegistryKey<ItemGroup> group) {
         registerBlock(name, block, new Item.Settings());
         ItemGroupEvents.modifyEntriesEvent(group).register(entries -> entries.add(block));
     }

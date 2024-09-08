@@ -3,15 +3,14 @@ package me.shedaniel.materialisation.modmenu.entries;
 import com.google.common.collect.Lists;
 import me.shedaniel.materialisation.modmenu.MaterialisationCreateOverrideListWidget;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.NarratorManager;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -35,9 +34,9 @@ public class StringEditEntry extends MaterialisationCreateOverrideListWidget.Edi
         this.validation = validation;
         this.buttonWidget = new TextFieldWidget(MinecraftClient.getInstance().textRenderer, 0, 0, 150, 16, NarratorManager.EMPTY) {
             @Override
-            public void render(MatrixStack stack, int int_1, int int_2, float float_1) {
+            public void render(DrawContext context, int int_1, int int_2, float float_1) {
                 setEditableColor(isValid() ? 0xe0e0e0 : 0xff5555);
-                super.render(stack, int_1, int_2, float_1);
+                super.render(context, int_1, int_2, float_1);
             }
         };
         buttonWidget.setMaxLength(1000);
@@ -51,15 +50,15 @@ public class StringEditEntry extends MaterialisationCreateOverrideListWidget.Edi
     }
     
     @Override
-    public void render(MatrixStack stack, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
-        super.render(stack, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isSelected, delta);
+    public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
+        super.render(context, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isSelected, delta);
         this.resetButton.setY(y);
         this.buttonWidget.setY(y + 2);
         this.resetButton.setX(x + entryWidth - resetButton.getWidth());
         this.buttonWidget.setX(x + entryWidth - 150 + 2);
         this.buttonWidget.setWidth(150 - resetButton.getWidth() - 2 - 4);
-        resetButton.render(stack, mouseX, mouseY, delta);
-        buttonWidget.render(stack, mouseX, mouseY, delta);
+        resetButton.render(context, mouseX, mouseY, delta);
+        buttonWidget.render(context, mouseX, mouseY, delta);
     }
 
     @Override

@@ -4,18 +4,17 @@ import me.shedaniel.clothconfig2.gui.widget.DynamicElementListWidget;
 import me.shedaniel.materialisation.api.PartMaterial;
 import me.shedaniel.materialisation.config.ConfigPackInfo;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Rect2i;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -52,9 +51,9 @@ public class MaterialisationMaterialListWidget extends DynamicElementListWidget<
         }
 
         @Override
-        public void render(MatrixStack stack, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
+        public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
             widget.bounds = new Rect2i(x, y, entryWidth, getItemHeight());
-            widget.render(stack, mouseX, mouseY, delta);
+            widget.render(context, mouseX, mouseY, delta);
         }
 
         @Override
@@ -74,21 +73,21 @@ public class MaterialisationMaterialListWidget extends DynamicElementListWidget<
             private boolean focused;
 
             @Override
-            public void render(MatrixStack stack, int mouseX, int mouseY, float delta) {
+            public void render(DrawContext context, int mouseX, int mouseY, float delta) {
 
-                fill(stack, bounds.getX(), bounds.getY(), bounds.getX() + bounds.getWidth(), bounds.getY() + bounds.getHeight(), 0x15FFFFFF);
+                context.fill(bounds.getX(), bounds.getY(), bounds.getX() + bounds.getWidth(), bounds.getY() + bounds.getHeight(), 0x15FFFFFF);
                 boolean isHovered = focused || bounds.contains(mouseX, mouseY);
-                MinecraftClient.getInstance().textRenderer.draw(stack, (isHovered ? Formatting.UNDERLINE.toString() : "") + packInfo.getDisplayName(), bounds.getX() + 5, bounds.getY() + 6, 16777215);
+                context.drawText(MinecraftClient.getInstance().textRenderer, (isHovered ? Formatting.UNDERLINE.toString() : "") + packInfo.getDisplayName(), bounds.getX() + 5, bounds.getY() + 6, 16777215, false);
                 Iterator<OrderedText> var7 = MinecraftClient.getInstance().textRenderer.wrapLines(Text.literal(trimEndNewlines(packInfo.getDescription())), bounds.getWidth() - 10).stream().limit(2).iterator();
                 int int_2 = bounds.getY() + 6 + 11;
                 for (int lolWot = 0; var7.hasNext(); int_2 += 9) {
                     OrderedText string_2 = var7.next();
-                    float float_1 = (float) (bounds.getX() + 5);
+                    int int_3 = (bounds.getX() + 5);
                     if (MinecraftClient.getInstance().textRenderer.isRightToLeft()) {
                         int int_5 = MinecraftClient.getInstance().textRenderer.getWidth(string_2);
-                        float_1 += (float) (bounds.getWidth() - 10 - int_5);
+                        int_3 += (bounds.getWidth() - 10 - int_5);
                     }
-                    MinecraftClient.getInstance().textRenderer.draw(stack, string_2, float_1, (float) int_2, 0xEEFFFFFF);
+                    context.drawText(MinecraftClient.getInstance().textRenderer, string_2, int_3, int_2, 0xEEFFFFFF, false);
                 }
             }
 
@@ -116,6 +115,16 @@ public class MaterialisationMaterialListWidget extends DynamicElementListWidget<
                 }
             }
 
+            @Override
+            public void setFocused(boolean focused) {
+                this.focused = focused;
+            }
+
+            @Override
+            public boolean isFocused() {
+                return focused;
+            }
+
             private String trimEndNewlines(String s) {
                 while (s != null && s.endsWith("\n")) {
                     s = s.substring(0, s.length() - 1);
@@ -124,7 +133,6 @@ public class MaterialisationMaterialListWidget extends DynamicElementListWidget<
                 return s;
             }
 
-            @Override
             public boolean changeFocus(boolean boolean_1) {
                 this.focused = !this.focused;
                 return this.focused;
@@ -142,9 +150,9 @@ public class MaterialisationMaterialListWidget extends DynamicElementListWidget<
         }
 
         @Override
-        public void render(MatrixStack stack, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
+        public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
             widget.bounds = new Rect2i(x, y, entryWidth, getItemHeight());
-            widget.render(stack, mouseX, mouseY, delta);
+            widget.render(context, mouseX, mouseY, delta);
         }
 
         @Override
@@ -164,9 +172,9 @@ public class MaterialisationMaterialListWidget extends DynamicElementListWidget<
             private boolean focused;
 
             @Override
-            public void render(MatrixStack stack, int mouseX, int mouseY, float delta) {
+            public void render(DrawContext context, int mouseX, int mouseY, float delta) {
                 boolean isHovered = focused || bounds.contains(mouseX, mouseY);
-                MinecraftClient.getInstance().textRenderer.draw(stack, (isHovered ? Formatting.UNDERLINE.toString() : "") + I18n.translate(partMaterial.getMaterialTranslateKey()), bounds.getX() + 5, bounds.getY() + 5, 16777215);
+                context.drawText(MinecraftClient.getInstance().textRenderer, (isHovered ? Formatting.UNDERLINE.toString() : "") + I18n.translate(partMaterial.getMaterialTranslateKey()), bounds.getX() + 5, bounds.getY() + 5, 16777215, false);
             }
 
             @Override
@@ -194,6 +202,15 @@ public class MaterialisationMaterialListWidget extends DynamicElementListWidget<
             }
 
             @Override
+            public void setFocused(boolean focused) {
+                this.focused = focused;
+            }
+
+            @Override
+            public boolean isFocused() {
+                return focused;
+            }
+
             public boolean changeFocus(boolean boolean_1) {
                 this.focused = !this.focused;
                 return this.focused;

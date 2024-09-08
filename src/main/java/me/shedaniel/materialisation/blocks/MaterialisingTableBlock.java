@@ -1,6 +1,5 @@
 package me.shedaniel.materialisation.blocks;
 
-import me.shedaniel.materialisation.ModReference;
 import me.shedaniel.materialisation.gui.MaterialisingTableScreenHandler;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
@@ -15,7 +14,6 @@ import net.minecraft.state.StateManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -34,14 +32,14 @@ public class MaterialisingTableBlock extends HorizontalFacingBlock {
     }
     
     public MaterialisingTableBlock() {
-        super(FabricBlockSettings.of(Material.METAL, MapColor.WHITE).strength(5.0F, 1200.0F).drops(new Identifier(ModReference.MOD_ID, "blocks/materialising_table")).sounds(BlockSoundGroup.METAL));
+        super(FabricBlockSettings.create().mapColor(MapColor.WHITE).strength(5.0F, 1200.0F).sounds(BlockSoundGroup.METAL));
         this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH));
-        //breakByTool(FabricToolTags.PICKAXES)
+        //breakByTool(FabricToolTags.PICKAXES).dropsLike(Materialisation.MATERIALISING_TABLE)
     }
     
     @Override
     public BlockState getPlacementState(ItemPlacementContext placementContext) {
-        return getDefaultState().with(FACING, placementContext.getPlayerFacing().getOpposite());
+        return getDefaultState().with(FACING, placementContext.getHorizontalPlayerFacing().getOpposite());
     }
     
     @Override

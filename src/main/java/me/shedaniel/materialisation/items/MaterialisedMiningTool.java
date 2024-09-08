@@ -19,6 +19,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -70,7 +71,7 @@ public interface MaterialisedMiningTool extends FabricItem {
             TagKey<Block> minableBlock = getEffectiveBlocks();
             if (minableBlock == null)
                 return FabricItem.super.isSuitableFor(stack, state);
-            return i < 1 && state.isIn(BlockTags.NEEDS_STONE_TOOL) ? false : state.isIn(minableBlock);
+            return (i >= 1 || !state.isIn(BlockTags.NEEDS_STONE_TOOL)) && state.isIn(minableBlock);
         }
     }
 
@@ -151,4 +152,18 @@ public interface MaterialisedMiningTool extends FabricItem {
                 EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(MaterialisationUtils.getItemModifierDamage(), "Tool modifier", attackDamage, EntityAttributeModifier.Operation.ADDITION)
         );
     }
+
+    static int getItemBarStep(ItemStack stack) {
+        float durability = MaterialisationUtils.getToolDurability(stack);
+        float maxDurability = MaterialisationUtils.getToolMaxDurability(stack);
+        return Math.round(13.0F - (maxDurability - durability) * 13.0F / maxDurability);
+    }
+
+    static int getItemBarColor(ItemStack stack) {
+        float durability = MaterialisationUtils.getToolDurability(stack);
+        float maxDurability = MaterialisationUtils.getToolMaxDurability(stack);
+        float hue = Math.max(0.0F, durability / maxDurability);
+        return MathHelper.hsvToRgb(hue / 3.0F, 1.0F, 1.0F);
+    }
+
 }

@@ -8,9 +8,9 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
@@ -37,10 +37,9 @@ public class MaterialisingTableScreen extends MaterialisingScreenBase<Materialis
         int y = (this.height - this.backgroundHeight) / 2;
         this.nameField = new TextFieldWidget(this.textRenderer, x + 38, y + 24, 103, 12, Text.translatable("container.repair"));
         this.nameField.setFocusUnlocked(false);
-        this.nameField.changeFocus(true);
         this.nameField.setEditableColor(-1);
         this.nameField.setUneditableColor(-1);
-        this.nameField.setTextFieldFocused(false); // setHasBorder
+        this.nameField.setFocused(false); // setHasBorder
         this.nameField.setMaxLength(35);
         this.nameField.setChangedListener(this::onRenamed);
         this.nameField.setDrawsBackground(false);
@@ -86,24 +85,24 @@ public class MaterialisingTableScreen extends MaterialisingScreenBase<Materialis
         }
     }
     
-    protected void drawForeground(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void render(DrawContext content, int mouseX, int mouseY) {
         RenderSystem.disableBlend();
-        this.textRenderer.draw(matrixStack, this.title, 6f, 6f, 4210752);
+        content.drawText(textRenderer, this.title, 6, 6, 4210752, false);
     }
     
     @Override
-    protected void drawBackground(MatrixStack matrixStack, float delta, int mouseX, int mouseY) {
+    protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
         int posX = x;
         int posY = y;
-        this.drawTexture(matrixStack, posX, posY, 0, 0, this.backgroundWidth, this.backgroundHeight);
-        this.drawTexture(matrixStack, posX + 34, posY + 20, 0, this.backgroundHeight + (this.handler.getSlot(0).hasStack() ? 0 : 16), 110, 16);
+        context.drawTexture(TEXTURE, posX, posY, 0, 0, this.backgroundWidth, this.backgroundHeight);
+        context.drawTexture(TEXTURE, posX + 34, posY + 20, 0, this.backgroundHeight + (this.handler.getSlot(0).hasStack() ? 0 : 16), 110, 16);
         if ((this.handler.getSlot(0).hasStack() || this.handler.getSlot(1).hasStack()) && !this.handler.getSlot(2).hasStack()) {
-            this.drawTexture(matrixStack, posX + 99, posY + 45, this.backgroundWidth, 0, 28, 21);
+            context.drawTexture(TEXTURE, posX + 99, posY + 45, this.backgroundWidth, 0, 28, 21);
         }
-        this.nameField.render(matrixStack, mouseX, mouseY, delta);
+        this.nameField.render(context, mouseX, mouseY, delta);
     }
     
     @Override

@@ -3,11 +3,11 @@ package me.shedaniel.materialisation.modmenu.entries;
 import com.google.common.collect.Lists;
 import me.shedaniel.materialisation.modmenu.MaterialisationCreateOverrideListWidget;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.NarratorManager;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
 import java.util.Collections;
@@ -37,16 +37,15 @@ public class BooleanEditEntry extends MaterialisationCreateOverrideListWidget.Ed
     }
 
     @Override
-    public void render(MatrixStack stack, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
-        super.render(stack, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isSelected, delta);
+    public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
         this.resetButton.setY(y);
         this.buttonWidget.setY(y);
         this.resetButton.setX(x + entryWidth - resetButton.getWidth());
         this.buttonWidget.setX(x + entryWidth - 150);
         this.buttonWidget.setWidth(150 - resetButton.getWidth() - 2);
         this.buttonWidget.setMessage(Text.literal(value ? "§aYes" : "§cNo"));
-        resetButton.render(stack, mouseX, mouseY, delta);
-        buttonWidget.render(stack, mouseX, mouseY, delta);
+        resetButton.render(context, mouseX, mouseY, delta);
+        buttonWidget.render(context, mouseX, mouseY, delta);
     }
 
     @Override

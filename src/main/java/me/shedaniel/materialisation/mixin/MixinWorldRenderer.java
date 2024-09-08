@@ -49,7 +49,7 @@ public class MixinWorldRenderer {
 
     @ModifyVariable(method = "render",
                     at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/objects/ObjectSet;iterator()Lit/unimi/dsi/fastutil/objects/ObjectIterator;",
-                             shift = At.Shift.BY, by = 2), ordinal = 0)
+                             shift = At.Shift.BY, by = 2, remap = false), ordinal = 0)
     private ObjectIterator<Long2ObjectMap.Entry<SortedSet<BlockBreakingInfo>>> appendBlockBreakingProgressions(ObjectIterator<Long2ObjectMap.Entry<SortedSet<BlockBreakingInfo>>> originalIterator) {
         return new AppendedObjectIterator<>(originalIterator, getCurrentExtraBreakingInfos());
     }

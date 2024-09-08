@@ -1,8 +1,7 @@
 package me.shedaniel.materialisation.modmenu;
 
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 
@@ -33,16 +32,16 @@ public class MaterialisationDownloadingScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack stack, int int_1, int int_2, float float_1) {
+    public void render(DrawContext context, int int_1, int int_2, float float_1) {
         if (newScreen != null) {
             assert client != null;
             client.setScreen(newScreen);
             newScreen = null;
             return;
         }
-        this.renderBackgroundTexture(0);
-        super.render(stack, int_1, int_2, float_1);
-        drawCenteredText(stack, this.textRenderer, title, this.width / 2, this.height / 2 - 50, 16777215);
+        this.renderBackgroundTexture(context);
+        super.render(context, int_1, int_2, float_1);
+        context.drawCenteredTextWithShadow(this.textRenderer, title, this.width / 2, this.height / 2 - 50, 16777215);
         String string_3;
         switch ((int) (Util.getMeasuringTimeMs() / 300L % 4L)) {
             case 0:
@@ -56,7 +55,7 @@ public class MaterialisationDownloadingScreen extends Screen {
             case 2:
                 string_3 = "o o O";
         }
-        drawCenteredText(stack, this.textRenderer, string_3, this.width / 2, this.height / 2 - 41, 8421504);
+        context.drawCenteredTextWithShadow(this.textRenderer, string_3, this.width / 2, this.height / 2 - 41, 8421504);
     }
 
     @Override

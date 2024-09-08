@@ -8,7 +8,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 
-
 public class RealItemRenderer {
     public static boolean renderGuiItemOverlay(ItemStack stack, int x, int y) {
         if (stack.getItem() instanceof MaterialisedMiningTool) {
@@ -18,7 +17,6 @@ public class RealItemRenderer {
                 MatrixStack matrixStack = new MatrixStack();
                 matrixStack.push();
                 RenderSystem.disableDepthTest();
-                RenderSystem.disableTexture();
                 RenderSystem.disableBlend();
                 Tessellator string = Tessellator.getInstance();
                 BufferBuilder immediate = string.getBuffer();
@@ -28,7 +26,6 @@ public class RealItemRenderer {
                 renderGuiQuad(immediate, x + 2, y + 13, 13, 2, 0, 0, 0, 255);
                 renderGuiQuad(immediate, x + 2, y + 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
                 RenderSystem.enableBlend();
-                RenderSystem.enableTexture();
                 RenderSystem.enableDepthTest();
                 matrixStack.pop();
                 return true;

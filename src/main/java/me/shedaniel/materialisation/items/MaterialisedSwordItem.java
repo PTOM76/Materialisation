@@ -54,7 +54,7 @@ public class MaterialisedSwordItem extends SwordItem implements MaterialisedMini
     
     @Override
     public boolean postHit(ItemStack stack, LivingEntity livingEntity_1, LivingEntity livingEntity_2) {
-        if (!livingEntity_1.world.isClient && (!(livingEntity_1 instanceof PlayerEntity) || !((PlayerEntity) livingEntity_1).getAbilities().creativeMode))
+        if (!livingEntity_1.getWorld().isClient && (!(livingEntity_1 instanceof PlayerEntity) || !((PlayerEntity) livingEntity_1).getAbilities().creativeMode))
             if (MaterialisationUtils.getToolDurability(stack) > 0)
                 if (MaterialisationUtils.applyDamage(stack, 1, livingEntity_1.getRandom())) {
                     livingEntity_1.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND);
@@ -71,7 +71,7 @@ public class MaterialisedSwordItem extends SwordItem implements MaterialisedMini
     @Override
     public boolean postMine(ItemStack stack, World world_1, BlockState blockState_1, BlockPos blockPos_1, LivingEntity livingEntity_1) {
         if (!world_1.isClient && blockState_1.getHardness(world_1, blockPos_1) != 0.0F)
-            if (!livingEntity_1.world.isClient && (!(livingEntity_1 instanceof PlayerEntity) || !((PlayerEntity) livingEntity_1).getAbilities().creativeMode))
+            if (!livingEntity_1.getWorld().isClient && (!(livingEntity_1 instanceof PlayerEntity) || !((PlayerEntity) livingEntity_1).getAbilities().creativeMode))
                 if (MaterialisationUtils.getToolDurability(stack) > 0)
                     if (MaterialisationUtils.applyDamage(stack, 2, livingEntity_1.getRandom())) {
                         livingEntity_1.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND);
@@ -95,4 +95,15 @@ public class MaterialisedSwordItem extends SwordItem implements MaterialisedMini
     public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
         return slot == EquipmentSlot.MAINHAND ? this.attributeModifiers : super.getAttributeModifiers(slot);
     }
+
+    @Override
+    public int getItemBarStep(ItemStack stack) {
+        return MaterialisedMiningTool.getItemBarStep(stack);
+    }
+
+    @Override
+    public int getItemBarColor(ItemStack stack) {
+        return MaterialisedMiningTool.getItemBarColor(stack);
+    }
+
 }

@@ -49,8 +49,8 @@ public abstract class AbstractMaterialisingHandlerBase extends ScreenHandler {
     }
     
     @Override
-    public void close(PlayerEntity player) {
-        super.close(player);
+    public void onClosed(PlayerEntity player) {
+        super.onClosed(player);
         this.context.run((world, blockPos) -> {
             this.dropInventory(player, this.main);
         });

@@ -6,10 +6,9 @@ import me.shedaniel.materialisation.modmenu.entries.BooleanEditEntry;
 import me.shedaniel.materialisation.modmenu.entries.DoubleEditEntry;
 import me.shedaniel.materialisation.modmenu.entries.IntEditEntry;
 import me.shedaniel.materialisation.modmenu.entries.StringEditEntry;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
 import java.util.List;
@@ -74,7 +73,7 @@ public class MaterialisationCreateOverrideScreen extends Screen {
             entries.add(new BooleanEditEntry("bright", partMaterial.isBright()));
             entries.add(new IntEditEntry("fullAmount", partMaterial.getFullAmount()));
         }
-        addDrawableChild(listWidget = new MaterialisationCreateOverrideListWidget(client, width, height, 28, height, DrawableHelper.OPTIONS_BACKGROUND_TEXTURE));
+        addDrawableChild(listWidget = new MaterialisationCreateOverrideListWidget(client, width, height, 28, height, OPTIONS_BACKGROUND_TEXTURE));
         for (MaterialisationCreateOverrideListWidget.EditEntry entry : entries) {
             listWidget.addItem(entry);
         }
@@ -97,8 +96,8 @@ public class MaterialisationCreateOverrideScreen extends Screen {
     }
     
     @Override
-    public void render(MatrixStack stack, int int_1, int int_2, float float_1) {
-        super.render(stack, int_1, int_2, float_1);
+    public void render(DrawContext context, int int_1, int int_2, float float_1) {
+        super.render(context, int_1, int_2, float_1);
         createButton.active = !listWidget.children().isEmpty();
         for (MaterialisationCreateOverrideListWidget.EditEntry child : listWidget.children()) {
             if (!createButton.active)
@@ -115,7 +114,7 @@ public class MaterialisationCreateOverrideScreen extends Screen {
         }
         if (!edited)
             createButton.active = false;
-        listWidget.render(stack, int_1, int_2, float_1);
-        drawCenteredText(stack, textRenderer, title, width / 2, 10, 16777215);
+        listWidget.render(context, int_1, int_2, float_1);
+        context.drawCenteredTextWithShadow(textRenderer, title, width / 2, 10, 16777215);
     }
 }

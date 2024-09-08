@@ -1,6 +1,5 @@
 package me.shedaniel.materialisation;
 
-import com.mojang.datafixers.util.Pair;
 import me.shedaniel.materialisation.api.Modifier;
 import me.shedaniel.materialisation.api.PartMaterial;
 import me.shedaniel.materialisation.api.PartMaterials;
@@ -18,7 +17,6 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
-import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
@@ -26,6 +24,7 @@ import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.fabricmc.fabric.impl.client.indigo.renderer.helper.GeometryHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.item.ClampedModelPredicateProvider;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.model.*;
@@ -54,7 +53,6 @@ import java.io.InputStreamReader;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @SuppressWarnings("unused")
@@ -62,8 +60,8 @@ import java.util.stream.Stream;
 public class MaterialisationClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        ScreenRegistry.register(Materialisation.MATERIALISING_TABLE_SCREEN_HANDLER, MaterialisingTableScreen::new);
-        ScreenRegistry.register(Materialisation.MATERIAL_PREPARER_SCREEN_HANDLER, MaterialPreparerScreen::new);
+        HandledScreens.register(Materialisation.MATERIALISING_TABLE_SCREEN_HANDLER, MaterialisingTableScreen::new);
+        HandledScreens.register(Materialisation.MATERIAL_PREPARER_SCREEN_HANDLER, MaterialPreparerScreen::new);
         ClientPlayNetworking.registerGlobalReceiver(Materialisation.MATERIALISING_TABLE_PLAY_SOUND, (client, handler, buf, responseSender) ->
                 MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.BLOCK_ANVIL_USE, 1, 1))
         );
@@ -89,7 +87,7 @@ public class MaterialisationClient implements ClientModInitializer {
                 Materialisation.MATERIALISED_AXE,
                 Materialisation.MATERIALISED_SWORD,
                 Materialisation.MATERIALISED_HAMMER
-        ).map(Registries.ITEM::getId).collect(Collectors.toList());
+        ).map(Registries.ITEM::getId).toList();
         Renderer renderer = RendererAccess.INSTANCE.getRenderer();
         ModelLoadingRegistry.INSTANCE.registerModelProvider((resourceManager, consumer) -> {
             for (Identifier identifier : identifiers) {
@@ -197,32 +195,38 @@ public class MaterialisationClient implements ClientModInitializer {
                 if (texturedHandleIdentifier.isPresent()) {
                     ModelIdentifier modelIdentifier = new ModelIdentifier(texturedHandleIdentifier.get(), "inventory");
                     BakedModel handleModel = modelManager.getModel(modelIdentifier);
-                    context.fallbackConsumer().accept(handleModel);
+                    handleModel.emitItemQuads(stack, randomSupplier, context);
+                    //context.fallbackConsumer().accept(handleModel);
                 } else {
                     int handleColor = handleMaterial.getToolColor();
                     boolean handleBright = handleMaterial.isBright();
                     context.pushTransform(quad -> {
                         quad.nominalFace(GeometryHelper.lightFace(quad));
-                        quad.spriteColor(0, handleColor, handleColor, handleColor, handleColor);
+                        quad.color(handleColor, handleColor, handleColor, handleColor);
+                        //quad.spriteColor(0, handleColor, handleColor, handleColor, handleColor);
                         return true;
                     });
                     BakedModel handleModel = modelManager.getModel(handleBright ? brightHandleIdentifier : handleIdentifier);
-                    context.fallbackConsumer().accept(handleModel);
+                    handleModel.emitItemQuads(stack, randomSupplier, context);
+                    //context.fallbackConsumer().accept(handleModel);
                     context.popTransform();
                 }
                 Optional<Identifier> texturedHeadIdentifier = headMaterial.getTexturedHeadIdentifier(tool.getToolType());
                 if (texturedHeadIdentifier.isPresent()) {
                     ModelIdentifier modelIdentifier = new ModelIdentifier(texturedHeadIdentifier.get(), "inventory");
                     BakedModel headModel = modelManager.getModel(modelIdentifier);
-                    context.fallbackConsumer().accept(headModel);
+                    headModel.emitItemQuads(stack, randomSupplier, context);
+                    //context.fallbackConsumer().accept(headModel);
                 } else {
                     context.pushTransform(quad -> {
                         quad.nominalFace(GeometryHelper.lightFace(quad));
-                        quad.spriteColor(0, headColor, headColor, headColor, headColor);
+                        quad.color(headColor, headColor, headColor, headColor);
+                        //quad.spriteColor(0, headColor, headColor, headColor, headColor);
                         return true;
                     });
                     BakedModel headModel = modelManager.getModel(headBright ? brightHeadIdentifier : headIdentifier);
-                    context.fallbackConsumer().accept(headModel);
+                    headModel.emitItemQuads(stack, randomSupplier, context);
+                    //context.fallbackConsumer().accept(headModel);
                     context.popTransform();
                 }
                 for (Map.Entry<Modifier, Integer> entry : MaterialisationUtils.getToolModifiers(stack).entrySet()) {
@@ -230,7 +234,8 @@ public class MaterialisationClient implements ClientModInitializer {
                         ModelIdentifier modifierModelId = getModifierModel(entry.getKey());
                         if (modifierModelId != null) {
                             BakedModel modifierModel = modelManager.getModel(modifierModelId);
-                            context.fallbackConsumer().accept(modifierModel);
+                            modifierModel.emitItemQuads(stack, randomSupplier, context);
+                            //context.fallbackConsumer().accept(modifierModel);
                         }
                     }
                 }

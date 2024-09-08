@@ -63,7 +63,7 @@ public class MaterialisedAxeItem extends AxeItem implements MaterialisedMiningTo
             if (!world.isClient) {
                 world.setBlockState(blockPos, block.getDefaultState().with(PillarBlock.AXIS, blockState.get(PillarBlock.AXIS)), 11);
                 if (playerEntity_1 != null) {
-                    if (!playerEntity_1.world.isClient && !playerEntity_1.getAbilities().creativeMode)
+                    if (!playerEntity_1.getWorld().isClient && !playerEntity_1.getAbilities().creativeMode)
                         if (MaterialisationUtils.applyDamage(itemStack, 1, playerEntity_1.getRandom())) {
                             playerEntity_1.sendToolBreakStatus(context.getHand());
                             Item item_1 = itemStack.getItem();
@@ -85,7 +85,7 @@ public class MaterialisedAxeItem extends AxeItem implements MaterialisedMiningTo
     
     @Override
     public boolean postHit(ItemStack stack, LivingEntity livingEntity_1, LivingEntity livingEntity_2) {
-        if (!livingEntity_1.world.isClient && (!(livingEntity_1 instanceof PlayerEntity) || !((PlayerEntity) livingEntity_1).getAbilities().creativeMode))
+        if (!livingEntity_1.getWorld().isClient && (!(livingEntity_1 instanceof PlayerEntity) || !((PlayerEntity) livingEntity_1).getAbilities().creativeMode))
             if (MaterialisationUtils.getToolDurability(stack) > 0)
                 if (MaterialisationUtils.applyDamage(stack, 2, livingEntity_1.getRandom())) {
                     livingEntity_1.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND);
@@ -102,7 +102,7 @@ public class MaterialisedAxeItem extends AxeItem implements MaterialisedMiningTo
     @Override
     public boolean postMine(ItemStack stack, World world_1, BlockState blockState_1, BlockPos blockPos_1, LivingEntity livingEntity_1) {
         if (!world_1.isClient && blockState_1.getHardness(world_1, blockPos_1) != 0.0F)
-            if (!livingEntity_1.world.isClient && (!(livingEntity_1 instanceof PlayerEntity) || !((PlayerEntity) livingEntity_1).getAbilities().creativeMode))
+            if (!livingEntity_1.getWorld().isClient && (!(livingEntity_1 instanceof PlayerEntity) || !((PlayerEntity) livingEntity_1).getAbilities().creativeMode))
                 if (MaterialisationUtils.getToolDurability(stack) > 0)
                     if (MaterialisationUtils.applyDamage(stack, 1, livingEntity_1.getRandom())) {
                         livingEntity_1.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND);
@@ -121,4 +121,15 @@ public class MaterialisedAxeItem extends AxeItem implements MaterialisedMiningTo
     public void appendTooltip(ItemStack stack, World world_1, List<Text> list_1, TooltipContext tooltipContext_1) {
         MaterialisationUtils.appendToolTooltip(stack, this, world_1, list_1, tooltipContext_1);
     }
+
+    @Override
+    public int getItemBarStep(ItemStack stack) {
+        return MaterialisedMiningTool.getItemBarStep(stack);
+    }
+
+    @Override
+    public int getItemBarColor(ItemStack stack) {
+        return MaterialisedMiningTool.getItemBarColor(stack);
+    }
+
 }
